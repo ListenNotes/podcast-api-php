@@ -120,15 +120,16 @@ final class PodcastApiClient extends Client\Curl
 
     public function search( array $arrOptions = [] )
     {
-        $strResponse = $this->_get( $arrOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'search' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    protected function _post( array $arrOptions, array $arrAvailableOptions, $strId = '' )
+    protected function _post( array $arrOptions, array $arrAvailableOptions = [], $strId = '' )
     {
         $strId = $strId ? implode( ',', $strId ) : '';
         $strAction = debug_backtrace()[1]['function'];
-        $arrOptions = $this->_fixOptions( $arrOptions, $arrAvailableOptions );
         if ( $strId ) {
             $arrOptions['ids'] = $strId;
         }
@@ -141,20 +142,9 @@ final class PodcastApiClient extends Client\Curl
     {
         $strId = $strId ? '/' . $strId . ( $boolRecommendations ? '/recommendations' : '' ) : '';
         $strAction = debug_backtrace()[1]['function'];
-        // $arrOptions = $this->_fixOptions( $arrOptions, $arrAvailableOptions );
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( $strAction ) . $strId . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
-    }
-
-    protected function _fixOptions( array $arrOptions = [], array $arrAvailableOptions = [] )
-    {
-        foreach ( $arrOptions as $strKey => $strValue ) {
-            if ( ! in_array( $strKey, $arrAvailableOptions ) ) {
-                unset( $arrOptions[$strKey] );
-            }
-        }
-        return $arrOptions;
     }
 }
