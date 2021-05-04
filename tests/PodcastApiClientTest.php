@@ -35,9 +35,8 @@ class PodcastApiClientTest extends TestCase
     public function testSearchWithMock(): void
     {
         $objClient = $this->podcastApiClient;
-        $strTerm = 'dummy';
-        $arrOptions = [ 'sort_by_date' => '1' ];
-        $strResponse = $objClient->search( $strTerm, $arrOptions );
+        $arrOptions = [ 'sort_by_date' => '1', 'q' => 'dummy' ];
+        $strResponse = $objClient->search( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
         $this->assertObjectHasAttribute( 'results', $objResponse );
@@ -46,7 +45,7 @@ class PodcastApiClientTest extends TestCase
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/search' );
         parse_str( $arrUrl['query'], $arrQuery );
-        $this->assertSame( $arrQuery['q'], $strTerm );
+        $this->assertSame( $arrQuery['q'], $arrOptions['q'] );
         $this->assertSame( $arrQuery['sort_by_date'], $arrOptions['sort_by_date'] );
     }
 
@@ -253,34 +252,37 @@ class PodcastApiClientTest extends TestCase
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/episodes/' . $strId . '/recommendations' );
     }
+
+    public function testPlaylistsById(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strId = 'shkjhd';
+        $strResponse = $objClient->playlists( $strId, [] );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'items', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->items ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/playlists/' . $strId );
+    }
+
+    public function testPlaylists(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strId = 'shkjhd';
+        $arrOptions = [ 'page' => '2' ];
+        $strResponse = $objClient->playlists( $strId, [] );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'items', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->items ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/playlists/' . $strId );
+    }
 /**
 
-    def test_fetch_recommendations_for_podcast_with_mock(self):
-        client = podcast_api.Client()
-        podcast_id = "adfsddf"
-        response = client.fetch_recommendations_for_podcast(id=podcast_id)
-        assert len(response.json().get("recommendations", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/podcasts/%s/recommendations" % podcast_id
-
-    def test_fetch_recommendations_for_episode_with_mock(self):
-        client = podcast_api.Client()
-        episode_id = "adfsddf"
-        response = client.fetch_recommendations_for_episode(id=episode_id)
-        assert len(response.json().get("recommendations", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/episodes/%s/recommendations" % episode_id
-
-    def test_fetch_playlist_by_id_with_mock(self):
-        client = podcast_api.Client()
-        playlist_id = "adfsddf"
-        response = client.fetch_playlist_by_id(id=playlist_id)
-        assert len(response.json().get("items", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/playlists/%s" % playlist_id
 
     def test_fetch_my_playlists_with_mock(self):
         client = podcast_api.Client()
