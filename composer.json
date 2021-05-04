@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ListenNotes\\PodcastApiClient\\": "src/"
+            "ListenNotes\\PodcastApiClient\\": "listennotes/"
         }
     },
     "autoload-dev": {
