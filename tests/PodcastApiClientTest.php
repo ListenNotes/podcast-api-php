@@ -24,25 +24,11 @@ class PodcastApiClientTest extends TestCase
 
     public function testSetApiKey(): void
     {
+        $objClient = $this->podcastApiClient;
+        $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), null );
 
-        // try {
-            $objClient = $this->podcastApiClient;
-            $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), null );
-
-            $objClient = new PodcastApiClient( 'testKey' );
-            $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), 'testKey' );
-
-
-        //     static::fail('Did not raise error');
-        // } catch (Exception\PermissionException $e) {
-        //     static::assertSame(403, $e->getHttpStatus());
-        //     static::assertInternalType('array', $e->getJsonBody());
-        //     static::assertSame("The provided key 'sk_test_********************1234' does not have access to account 'foo' (or that account does not exist). Application access may have been revoked.", $e->getMessage());
-        // } catch (\Exception $e) {
-        //     static::fail('Unexpected exception: ' . \get_class($e));
-        // }
-        // $actual = $this->podcastApiClient;
-        // $this->assertInstanceOf(PodcastApiClient::class, $actual);
+        $objClient = new PodcastApiClient( 'testKey' );
+        $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), 'testKey' );
     }
 
     public function testSearchWithMock(): void

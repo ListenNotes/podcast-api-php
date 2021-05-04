@@ -1,15 +1,17 @@
 {
-    "name": "listen-notes/podcast-api-client",
-    "description": "ListenNotes Podcast PHP Api Client",
+    "name": "listennotes/podcast-api",
+    "description": "PHP bindings for the Listen Notes Podcast API",
     "license": "MIT",
     "authors": [
         {
-            "name": "Igor Astakhov",
-            "email": "astahov@gmail.com"
+            "name": "Listen Notes, Inc.",
+            "email": "hello@listennotes.com"
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0"
+        "php": "^7.0 || ^8.0",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
