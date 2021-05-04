@@ -7,7 +7,7 @@ try {
 
     define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
     $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
-    $strResult = $objClient->search( 'startup' );
+    $strResult = $objClient->search( [ 'q' => 'startup' ] );
 
     echo 'RESPONSE: ' . substr( $strResult, 0, 40 ) . '... ' . PHP_EOL;
     echo 'LENGTH: ' . strlen( $strResult ) . PHP_EOL;
