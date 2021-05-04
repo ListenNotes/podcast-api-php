@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace ListenNotes\PodcastApiClient\Client;
+
 use ListenNotes\PodcastApiClient\Exception;
 
 class Curl
@@ -144,11 +145,39 @@ class Curl
 
         $this->setResponse( $strResponse );
 
-        if ( $this->getStatusCode() != 200 ) {
-            throw new \Exception( 'Invalid status code..' );
-        }
-        // var_dump( $this->_arrInfo );
+        $this->_processStatusCode();
+
         return $this->_strBody;
+    }
+
+    public function post( $strUrl, $arrOptions )
+    {
+        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
+        curl_setopt( $this->_curl, CURLOPT_POSTFIELDS, $arrOptions );
+        curl_setopt( $this->_curl, CURLOPT_POST, true );
+
+        $strResponse = curl_exec( $this->_curl );
+
+        $this->setResponse( $strResponse );
+
+        $this->_processStatusCode();
+
+        return $this->_strBody;
+    }
+
+    protected function _processStatusCode()
+    {
+        switch ( $this->getStatusCode() ) {
+            case 200:
+                break;
+
+            case 401:
+                throw new Exception\AuthenticationException( 'Authentication Failed.' );
+                break;
+
+            default:
+                throw new \Exception( 'Invalid status code..' . $this->getStatusCode() );
+        }
     }
 
     public function __destruct()
