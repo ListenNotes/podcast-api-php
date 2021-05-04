@@ -11,45 +11,51 @@ final class PodcastApiClient extends Client\Curl
         parent::__construct( $strApiKey );
     }
 
-    public function playlists( $mixId = '', array $arrOptions = [] )
+    public function fetchMyPlaylists( $mixId = '', array $arrOptions = [] )
     {
-        $arrAvailableOptions = [ 'page', 'sort', 'type', 'last_timestamp_ms' ];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions, $mixId );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'playlists' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    public function just_listen( array $arrOptions = [] )
+    public function justListen( array $arrOptions = [] )
     {
-        $arrAvailableOptions = [];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'just_listen' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    public function languages( array $arrOptions = [] )
+    public function fetchPodcastLanguages( array $arrOptions = [] )
     {
-        $arrAvailableOptions = [];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'languages' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    public function regions( array $arrOptions = [] )
+    public function fetchPodcastRegions( array $arrOptions = [] )
     {
-        $arrAvailableOptions = [];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'regions' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    public function genres( array $arrOptions = [] )
+    public function fetchPodcastsGenres( array $arrOptions = [] )
     {
-        $arrAvailableOptions = [ 'top_level_only' ];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'genres' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
-    public function curated_podcasts( $mixId = '', array $arrOptions = [] )
+    public function fetchCuratedPodcasts( $mixId = '', array $arrOptions = [] )
     {
-        $arrAvailableOptions = [ 'page' ];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions, $mixId );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'curated_podcasts' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
@@ -73,48 +79,26 @@ final class PodcastApiClient extends Client\Curl
     public function podcasts( $mixId, array $arrOptions = [], $boolRecommendations = false )
     {
         if ( is_array( $mixId ) ) {
-            $arrAvailableOptions = [
-                'rsses',
-                'itunes_ids',
-                'show_latest_episodes',
-                'next_episode_pub_date'
-            ];
             $strResponse = $this->_post( $arrOptions, $arrAvailableOptions, $mixId );
         } else {
-            $arrAvailableOptions = [
-                'next_episode_pub_date',
-                'sort'
-            ];
-            if ( $boolRecommendations ) {
-                $arrAvailableOptions[] = 'safe_mode';
-            }
             $strResponse = $this->_get( $arrOptions, $arrAvailableOptions, $mixId, $boolRecommendations );
         }
         return $strResponse;
     }
 
-    public function best_podcasts( array $arrOptions = [] )
+    public function fetchBestPodcasts( array $arrOptions = [] )
     {
-        $arrAvailableOptions = [
-            'genre_id',
-            'page',
-            'region',
-            'safe_mode'
-        ];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'best_podcasts' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
     public function typeahead( $strQuery = '', array $arrOptions = [] )
     {
-        $arrOptions['q'] = $strQuery;
-        $arrAvailableOptions = [
-            'q',
-            'show_podcasts',
-            'show_genres',
-            'safe_mode'
-        ];
-        $strResponse = $this->_get( $arrOptions, $arrAvailableOptions );
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'typeahead' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
 
@@ -138,7 +122,7 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    protected function _get( array $arrOptions, array $arrAvailableOptions = [], $strId = '', $boolRecommendations = false )
+    protected function _get( array $arrOptions, $strId = '', $boolRecommendations = false )
     {
         $strId = $strId ? '/' . $strId . ( $boolRecommendations ? '/recommendations' : '' ) : '';
         $strAction = debug_backtrace()[1]['function'];
