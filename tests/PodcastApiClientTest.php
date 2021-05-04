@@ -168,62 +168,92 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $arrUrl['path'], '/api/v2/curated_podcasts/' . $strId );
     }
 
+    public function testGenres(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'top_level_only' => '1' ];
+        $strResponse = $objClient->genres( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'genres', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->genres ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/genres' );
+        parse_str( $arrUrl['query'], $arrQuery );
+        $this->assertSame( $arrQuery['top_level_only'], $arrOptions['top_level_only'] );
+    }
+
+    public function testRegions(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ ];
+        $strResponse = $objClient->regions( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'regions', $objResponse );
+        $this->assertGreaterThan( 0, count( (array) $objResponse->regions ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/regions' );
+    }
+
+    public function testLanguages(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ ];
+        $strResponse = $objClient->languages( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'languages', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->languages ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/languages' );
+    }
+
+    public function testJustListen(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ ];
+        $strResponse = $objClient->just_listen( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'audio_length_sec', $objResponse );
+        $this->assertGreaterThan( 0, $objResponse->audio_length_sec );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/just_listen' );
+    }
+
+    public function testPodcastsByIdRecommendations(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strId = 'shkjhd';
+        $strResponse = $objClient->podcasts( $strId, [], true );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'recommendations', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->recommendations ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/' . $strId . '/recommendations' );
+    }
+
+    public function testEpisodesByIdRecommendations(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strId = 'shkjhd';
+        $strResponse = $objClient->episodes( $strId, [], true );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'recommendations', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->recommendations ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/episodes/' . $strId . '/recommendations' );
+    }
 /**
-
-    def test_fetch_curated_podcasts_list_by_id_with_mock(self):
-        client = podcast_api.Client()
-        curated_list_id = "asdfsdaf"
-        response = client.fetch_curated_podcasts_list_by_id(id=curated_list_id)
-        assert len(response.json().get("podcasts", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/curated_podcasts/%s" % curated_list_id
-
-    def test_fetch_curated_podcasts_lists_with_mock(self):
-        client = podcast_api.Client()
-        page = 2
-        response = client.fetch_curated_podcasts_lists(page=page)
-        assert response.json().get("total") > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        params = parse_qs(url.query)
-        assert params["page"][0] == str(page)
-        assert url.path == "/api/v2/curated_podcasts"
-
-    def test_fetch_podcast_genres_with_mock(self):
-        client = podcast_api.Client()
-        top_level_only = 1
-        response = client.fetch_podcast_genres(top_level_only=top_level_only)
-        assert len(response.json().get("genres", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        params = parse_qs(url.query)
-        assert params["top_level_only"][0] == str(top_level_only)
-        assert url.path == "/api/v2/genres"
-
-    def test_fetch_podcast_regions_with_mock(self):
-        client = podcast_api.Client()
-        response = client.fetch_podcast_regions()
-        assert len(response.json().get("regions", {}).keys()) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/regions"
-
-    def test_fetch_podcast_languages_with_mock(self):
-        client = podcast_api.Client()
-        response = client.fetch_podcast_languages()
-        assert len(response.json().get("languages", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/languages"
-
-    def test_just_listen_with_mock(self):
-        client = podcast_api.Client()
-        response = client.just_listen()
-        assert response.json().get("audio_length_sec", 0) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/just_listen"
 
     def test_fetch_recommendations_for_podcast_with_mock(self):
         client = podcast_api.Client()
