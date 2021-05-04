@@ -11,7 +11,7 @@ final class PodcastApiClient extends Client\Curl
         parent::__construct( $strApiKey );
     }
 
-    public function fetchMyPlaylists( $mixId = '', array $arrOptions = [] )
+    public function fetchMyPlaylists( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'playlists' ) . $strQuery;
@@ -51,10 +51,23 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    public function fetchCuratedPodcasts( $mixId = '', array $arrOptions = [] )
+    public function fetchCuratedPodcasts( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'curated_podcasts' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchPodcastById( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'podcasts' ) . '/' . $strId . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
@@ -94,7 +107,7 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    public function typeahead( $strQuery = '', array $arrOptions = [] )
+    public function typeahead( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'typeahead' ) . $strQuery;
