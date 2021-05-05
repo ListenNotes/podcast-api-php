@@ -171,12 +171,27 @@ class Curl
             case 200:
                 break;
 
+            case 400:
+                throw new Exception\InvalidRequestException( 'Something wrong on your end (client side errors), e.g., missing required parameters.' );
+                break;
+
             case 401:
-                throw new Exception\AuthenticationException( 'Authentication Failed.' );
+                throw new Exception\AuthenticationException( 'Wrong api key or your account is suspended.' );
+                break;
+
+            case 404:
+                throw new Exception\NotFoundException( 'Endpoint not exist, or podcast / episode not exist.' );
+                break;
+
+            case 429:
+                throw new Exception\RateLimitException( 'You use FREE plan and you exceed the quota limit.' );
                 break;
 
             default:
-                throw new \Exception( 'Invalid status code..' . $this->getStatusCode() );
+                if ( $this->getStatusCode() >= 500 ) {
+                    throw new Exception\ListenApiException( 'Error on our end (unexpected server errors)' );
+                }
+                throw new \Exception( 'Unknown error. Please report to hello@listennotes.com. ' . $this->getStatusCode() );
         }
     }
 
