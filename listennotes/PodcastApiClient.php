@@ -43,7 +43,7 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    public function fetchPodcastsGenres( array $arrOptions = [] )
+    public function fetchPodcastGenres( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'genres' ) . $strQuery;
@@ -55,6 +55,71 @@ final class PodcastApiClient extends Client\Curl
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'curated_podcasts' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchRecommendationsForEpisode( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'episodes' ) . '/' . $strId . '/recommendations' . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchRecommendationsForPodcast( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'podcasts' ) . '/' . $strId . '/recommendations' . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchPlaylistById( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'playlists' ) . '/' . $strId . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchCuratedPodcastsListById( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'curated_podcasts' ) . '/' . $strId . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchEpisodeById( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'episodes' ) . '/' . $strId . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
