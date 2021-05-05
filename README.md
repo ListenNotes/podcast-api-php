@@ -27,7 +27,7 @@ composer require listennotes/podcast-api
 ## Usage
 
 The library needs to be configured with your account's API key which is
-available in your [Listen API Dashboard](https://www.listennotes.com/api/dashboard/#apps). Set `api_key` to its
+available in your [Listen API Dashboard](https://www.listennotes.com/api/dashboard/#apps). Set `API_KEY` to its
 value:
 
 ```php
@@ -68,7 +68,7 @@ try {
 
 ```
 
-If `api_key` is None, then we'll connect to a [mock server](https://www.listennotes.com/api/tutorials/#faq0) that returns fake data for testing purposes.
+If `API_KEY` is null, then we'll connect to a [mock server](https://www.listennotes.com/api/tutorials/#faq0) that returns fake data for testing purposes.
 
 
 ### Handling exceptions
