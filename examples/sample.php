@@ -9,10 +9,9 @@ try {
 
     $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
     $strResult = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
-
     $arrHeaders = $objClient->getHeaders();
+
     print("\n=== Some account info ===\n");
-    printf( "Free Quota this month: %s requests\n" , $arrHeaders['x-listenapi-freequota'] );
     printf( "Free Quota this month: %s requests\n" , $arrHeaders['x-listenapi-freequota'] );
     printf( "Usage this month: %s requests\n" , $arrHeaders["x-listenapi-usage"] );
     printf( "Next billing date: %s\n" , $arrHeaders["x-listenapi-nextbillingdate"] );
