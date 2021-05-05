@@ -37,10 +37,10 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-before_install:
-  # Install various build dependencies. We use `travis_retry` because Composer
-  # will occasionally fail intermittently.
-  - travis_retry make vendor
+# before_install:
+#   # Install various build dependencies. We use `travis_retry` because Composer
+#   # will occasionally fail intermittently.
+#   - travis_retry make vendor
 
 script:
   - curl -sS https://getcomposer.org/installer | php
