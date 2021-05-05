@@ -8,13 +8,16 @@ try {
     define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
     $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
-    $strResult = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
+    $strResponse = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
     $arrHeaders = $objClient->getHeaders();
 
     print("\n=== Some account info ===\n");
     printf( "Free Quota this month: %s requests\n" , $arrHeaders['x-listenapi-freequota'] );
     printf( "Usage this month: %s requests\n" , $arrHeaders["x-listenapi-usage"] );
     printf( "Next billing date: %s\n" , $arrHeaders["x-listenapi-nextbillingdate"] );
+
+    print("\n=== Response data ===\n");
+    print_r( json_decode( $strResponse ) );
 
 } catch ( ListenNotes\PodcastApiClient\Exception\APIConnectionException $objException ) {
     print("Failed ot connect to Listen API servers");
@@ -41,8 +44,8 @@ try {
 // $strResponse = $objClient->fetchPodcastById( [ 'id' => '4d3fe717742d4963a85562e9f84d8c79' ] );
 // print_r( json_decode( $strResponse ) );
 
-$strResponse = $objClient->fetchEpisodeById( [ 'id' => '6b6d65930c5a4f71b254465871fed370' ] );
-print_r( json_decode( $strResponse ) );
+// $strResponse = $objClient->fetchEpisodeById( [ 'id' => '6b6d65930c5a4f71b254465871fed370' ] );
+// print_r( json_decode( $strResponse ) );
 
 // $strResponse = $objClient->batchFetchEpisodes( [ 'ids' => 'c577d55b2b2b483c969fae3ceb58e362,0f34a9099579490993eec9e8c8cebb82' ]);
 // print_r( json_decode( $strResponse ) );
@@ -50,14 +53,11 @@ print_r( json_decode( $strResponse ) );
 // $strResponse = $objClient->batchFetchPodcasts( [ 'ids' => '3302bc71139541baa46ecb27dbf6071a,68faf62be97149c280ebcc25178aa731,37589a3e121e40debe4cef3d9638932a,9cf19c590ff0484d97b18b329fed0c6a' ]);
 // print_r( json_decode( $strResponse ) );
 
-// $strResponse = $objClient->fetchCuratedPodcasts_list_by_id( [ 'id' => 'SDFKduyJ47r' ] );
+// $strResponse = $objClient->fetchCuratedPodcastsListById( [ 'id' => 'SDFKduyJ47r' ] );
 // print_r( json_decode( $strResponse ) );
 
-// $strResponse = $objClient->fetchCuratedPodcasts_lists( [ 'page' => 2 ] );
-// print_r( json_decode( $strResponse ) );
-
-// $strResponse = $objClient->fetchCuratedPodcasts_lists( [ 'page' => 2 ] );
-// print_r( json_decode( $strResponse ) );
+$strResponse = $objClient->fetchCuratedPodcastsLists( [ 'page' => 2 ] );
+print_r( json_decode( $strResponse ) );
 
 // $strResponse = $objClient->fetchPodcastGenres( [ 'top_level_only' => 0 ] );
 // print_r( json_decode( $strResponse ) );

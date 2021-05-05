@@ -51,7 +51,7 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    public function fetchCuratedPodcasts( array $arrOptions = [] )
+    public function fetchCuratedPodcastsLists( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'curated_podcasts' ) . $strQuery;
