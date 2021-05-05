@@ -15,6 +15,7 @@ class Curl
     protected $_strHost;
     protected $_strMethod;
     protected $_strUri;
+    protected $_strRequestBody;
     protected $_strVersion = 'api/v2';
     protected $_arrRequestHeaders = [];
 
@@ -114,6 +115,9 @@ class Curl
 
     public function parseRequestHeaders()
     {
+        // if ( ! isset( $this->_objInfo->request_header ) ) {
+        //     return [];
+        // }
         $arrHeaders = array_filter( explode( "\r\n", $this->_objInfo->request_header ) );
         $strHead = array_shift( $arrHeaders );
         list( $strMethod, $strUri, $strProtocol ) = explode( ' ', $strHead );
@@ -150,6 +154,29 @@ class Curl
         return $this->_strBody;
     }
 
+    public function setRequestBody( $strBody )
+    {
+        $this->_strRequestBody = $strBody;
+    }
+
+    public function getRequestBody()
+    {
+        return $this->_strRequestBody;
+    }
+
+    public function delete( $strUrl )
+    {
+        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
+        curl_setopt( $this->_curl, CURLOPT_CUSTOMREQUEST, 'DELETE' );
+
+        $strResponse = curl_exec( $this->_curl );
+        $this->setResponse( $strResponse );
+
+        $this->_processStatusCode();
+
+        return $this->_strBody;
+    }
+
     public function post( $strUrl, $arrOptions )
     {
         curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
@@ -157,6 +184,7 @@ class Curl
         curl_setopt( $this->_curl, CURLOPT_POST, true );
 
         $strResponse = curl_exec( $this->_curl );
+        $this->setRequestBody( http_build_query( $arrOptions ) );
 
         $this->setResponse( $strResponse );
 
