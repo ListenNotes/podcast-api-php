@@ -87,7 +87,7 @@ class Curl
         foreach ( $arrHeaders as $I => $strHeader ) {
             unset( $arrHeaders[$I] );
             list( $strHeader, $strValue ) = explode( ': ', $strHeader );
-            $arrHeaders[$strHeader] = $strValue;
+            $arrHeaders[ strtolower( $strHeader ) ] = $strValue;
         }
         return $arrHeaders;
     }
