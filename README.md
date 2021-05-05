@@ -150,6 +150,10 @@ The ENTERPRISE plan allows to see up to 10,000 search results (or `offset` &lt; 
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -983,6 +987,10 @@ Suggest search terms, podcast genres, and podcasts.
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -1187,6 +1195,10 @@ You can use the **next_episode_pub_date** parameter to do pagination and fetch m
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -1737,6 +1749,10 @@ Fetch detailed meta data for a specific episode.
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -2139,6 +2155,10 @@ Get a list of languages that are supported in Listen Notes database. You can use
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -2305,6 +2325,10 @@ You may want to cache the list of genres on the client side.
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -2492,6 +2516,10 @@ This endpoint returns same data as https://www.listennotes.com/best-podcasts/
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -3809,6 +3837,10 @@ It returns a dictionary of country codes (e.g., us, gb...) &amp; country names (
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -4019,6 +4051,10 @@ Fetch up to 8 podcast recommendations based on the given podcast id.
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -4692,6 +4728,10 @@ Fetch up to 8 episode recommendations based on the given episode id.
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -5072,6 +5112,10 @@ Batch fetch basic meta data for up to 10 episodes. This endpoint could be used t
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -5298,6 +5342,10 @@ For detailed meta data (including episodes) of an individual podcast, you need t
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -6477,6 +6525,10 @@ Recently published episodes are more likely to be fetched. Good luck!
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -6659,6 +6711,10 @@ This endpoint returns same data as https://www.listennotes.com/curated-podcasts/
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -7756,6 +7812,10 @@ A bunch of curated lists from online media. For each list, you&#x27;ll get basic
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -9183,6 +9243,10 @@ Podcast hosting services can use this endpoint to help your users directly submi
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -9300,6 +9364,10 @@ Podcast hosting services can use this endpoint to streamline the process of podc
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -9367,6 +9435,10 @@ You can fetch all playlists created by you, and **public** / **unlisted** playli
 
 Example:
 ```php
+
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
@@ -10559,6 +10631,10 @@ You can use the **page** parameter to do pagination and fetch more playlists.
 Example:
 ```php
 
+<?php
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
 $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
@@ -10722,6 +10798,3 @@ See all available parameters on the [API Docs page](https://www.listennotes.com/
 }
 ```   
 </details>
-
-
-
