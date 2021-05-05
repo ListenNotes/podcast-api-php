@@ -44,5 +44,5 @@ cache:
 
 script:
   - curl -sS https://getcomposer.org/installer | php
-  - php composer.phar install
+  - php composer.phar install --ignore-platform-reqs
   - php composer.phar test tests/*
