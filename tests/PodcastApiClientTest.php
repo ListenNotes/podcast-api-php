@@ -150,6 +150,9 @@ class PodcastApiClientTest extends TestCase
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/podcasts' );
 
+        parse_str( urldecode( $objClient->getRequestBody() ), $arrQuery );
+        $this->assertSame( $arrQuery['ids'], $arrOptions['ids'] );
+
         $arrHeaders = $objClient->parseRequestHeaders();
         $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );
     }
@@ -166,6 +169,9 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $objClient->getMethod(), 'POST' );
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/episodes' );
+
+        parse_str( urldecode( $objClient->getRequestBody() ), $arrQuery );
+        $this->assertSame( $arrQuery['ids'], $arrOptions['ids'] );
 
         $arrHeaders = $objClient->parseRequestHeaders();
         $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );

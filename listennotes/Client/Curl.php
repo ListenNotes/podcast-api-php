@@ -87,7 +87,7 @@ class Curl
         foreach ( $arrHeaders as $I => $strHeader ) {
             unset( $arrHeaders[$I] );
             list( $strHeader, $strValue ) = explode( ': ', $strHeader );
-            $arrHeaders[$strHeader] = $strValue;
+            $arrHeaders[ strtolower( $strHeader ) ] = $strValue;
         }
         return $arrHeaders;
     }
@@ -173,13 +173,13 @@ class Curl
 
     public function post( $strUrl, $arrOptions )
     {
-        // $this->setRequestHeader( 'X-ListenAPI-Key', $strApiKey );
+        $strOptions = http_build_query( $arrOptions );
         curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
-        curl_setopt( $this->_curl, CURLOPT_POSTFIELDS, $arrOptions );
+        curl_setopt( $this->_curl, CURLOPT_POSTFIELDS, $strOptions );
         curl_setopt( $this->_curl, CURLOPT_POST, true );
 
         $strResponse = curl_exec( $this->_curl );
-        $this->setRequestBody( http_build_query( $arrOptions ) );
+        $this->setRequestBody( $strOptions );
         $this->setResponse( $strResponse );
         $this->_processStatusCode();
 
