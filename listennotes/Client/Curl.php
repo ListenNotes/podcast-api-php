@@ -12,15 +12,16 @@ class Curl
     protected $_objInfo;
     protected $_strHeader;
     protected $_strBody;
-    protected $_strHost;
+    protected $_strHost = 'https://listen-api-test.listennotes.com';
     protected $_strMethod;
     protected $_strUri;
+    protected $_strRequestBody;
     protected $_strVersion = 'api/v2';
     protected $_arrRequestHeaders = [];
+    protected $_strUserAgent = 'podcast-api-php';
 
     public function __construct( $strApiKey = '' )
     {
-        $this->_strHost = 'https://listen-api-test.listennotes.com';
         if ( $strApiKey ) {
             $this->_strHost = 'https://listen-api.listennotes.com';
             $this->setRequestHeader( 'X-ListenAPI-Key', $strApiKey );
@@ -32,8 +33,8 @@ class Curl
             CURLOPT_HEADER         => true,  // don't return headers
             CURLOPT_FOLLOWLOCATION => true,   // follow redirects
             CURLOPT_MAXREDIRS      => 3,     // stop after 10 redirects
-            CURLOPT_ENCODING       => "",     // handle compressed
-            CURLOPT_USERAGENT      => "PHP_API", // name of client
+            CURLOPT_ENCODING       => '',     // handle compressed
+            CURLOPT_USERAGENT      => $this->_strUserAgent, // name of client
             CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
             CURLOPT_CONNECTTIMEOUT => 10,    // time-out on connect
             CURLOPT_TIMEOUT        => 10,    // time-out on response
@@ -59,7 +60,6 @@ class Curl
             }
         }
         return $arrHeaders;
-        // return isset( $this->_arrRequestHeaders[$strHeader] ) ? $this->_arrRequestHeaders[$strHeader] : null;
     }
 
     public function setRequestHeader( $strHeader, $strValue )
@@ -123,7 +123,7 @@ class Curl
         foreach ( $arrHeaders as $I => $strHeader ) {
             unset( $arrHeaders[$I] );
             list( $strHeader, $strValue ) = explode( ': ', $strHeader );
-            $arrHeaders[$strHeader] = $strValue;
+            $arrHeaders[ strtolower( $strHeader ) ] = $strValue;
         }
         return $arrHeaders;
     }
@@ -138,13 +138,34 @@ class Curl
         $this->_strBody = substr( $strResponse, $intSize );
     }
 
+    public function setRequestBody( $strBody )
+    {
+        $this->_strRequestBody = $strBody;
+    }
+
+    public function getRequestBody()
+    {
+        return $this->_strRequestBody;
+    }
+
     public function get( $strUrl )
     {
         curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
+
         $strResponse = curl_exec( $this->_curl );
-
         $this->setResponse( $strResponse );
+        $this->_processStatusCode();
 
+        return $this->_strBody;
+    }
+
+    public function delete( $strUrl )
+    {
+        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
+        curl_setopt( $this->_curl, CURLOPT_CUSTOMREQUEST, 'DELETE' );
+
+        $strResponse = curl_exec( $this->_curl );
+        $this->setResponse( $strResponse );
         $this->_processStatusCode();
 
         return $this->_strBody;
@@ -152,14 +173,14 @@ class Curl
 
     public function post( $strUrl, $arrOptions )
     {
+        // $this->setRequestHeader( 'X-ListenAPI-Key', $strApiKey );
         curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
         curl_setopt( $this->_curl, CURLOPT_POSTFIELDS, $arrOptions );
         curl_setopt( $this->_curl, CURLOPT_POST, true );
 
         $strResponse = curl_exec( $this->_curl );
-
+        $this->setRequestBody( http_build_query( $arrOptions ) );
         $this->setResponse( $strResponse );
-
         $this->_processStatusCode();
 
         return $this->_strBody;

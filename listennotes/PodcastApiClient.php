@@ -137,30 +137,37 @@ final class PodcastApiClient extends Client\Curl
         return $strResponse;
     }
 
-    public function episodes( $mixId, array $arrOptions = [], $boolRecommendations = false  )
+    public function batchFetchEpisodes( array $arrOptions = [] )
     {
-        if ( is_array( $mixId ) ) {
-            $arrAvailableOptions = [];
-            $strResponse = $this->_post( $arrOptions, $arrAvailableOptions, $mixId );
-        } else {
-            $arrAvailableOptions = [
-                'show_transcript',
-            ];
-            if ( $boolRecommendations ) {
-                $arrAvailableOptions[] = 'safe_mode';
-            }
-            $strResponse = $this->_get( $arrOptions, $arrAvailableOptions, $mixId, $boolRecommendations );
-        }
+        $strUrl = $this->getAction( 'episodes' );
+        $strResponse = $this->post( $strUrl, $arrOptions );
         return $strResponse;
     }
 
-    public function podcasts( $mixId, array $arrOptions = [], $boolRecommendations = false )
+    public function batchFetchPodcasts( array $arrOptions = [] )
     {
-        if ( is_array( $mixId ) ) {
-            $strResponse = $this->_post( $arrOptions, $arrAvailableOptions, $mixId );
-        } else {
-            $strResponse = $this->_get( $arrOptions, $arrAvailableOptions, $mixId, $boolRecommendations );
+        $strUrl = $this->getAction( 'podcasts' );
+        $strResponse = $this->post( $strUrl, $arrOptions );
+        return $strResponse;
+    }
+
+    public function submitPodcast( array $arrOptions = [] )
+    {
+        $strUrl = $this->getAction( 'podcasts/submit' );
+        $strResponse = $this->post( $strUrl, $arrOptions );
+        return $strResponse;
+    }
+
+    public function deletePodcast( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
         }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'podcasts' ) . '/' . $strId;
+        $strResponse = $this->delete( $strUrl, $arrOptions );
         return $strResponse;
     }
 
@@ -184,28 +191,6 @@ final class PodcastApiClient extends Client\Curl
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'search' ) . $strQuery;
-        $strResponse = $this->get( $strUrl );
-        return $strResponse;
-    }
-
-    protected function _post( array $arrOptions, array $arrAvailableOptions = [], $strId = '' )
-    {
-        $strId = $strId ? implode( ',', $strId ) : '';
-        $strAction = debug_backtrace()[1]['function'];
-        if ( $strId ) {
-            $arrOptions['ids'] = $strId;
-        }
-        $strUrl = $this->getAction( $strAction );
-        $strResponse = $this->post( $strUrl, $arrOptions );
-        return $strResponse;
-    }
-
-    protected function _get( array $arrOptions, $strId = '', $boolRecommendations = false )
-    {
-        $strId = $strId ? '/' . $strId . ( $boolRecommendations ? '/recommendations' : '' ) : '';
-        $strAction = debug_backtrace()[1]['function'];
-        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
-        $strUrl = $this->getAction( $strAction ) . $strId . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
     }

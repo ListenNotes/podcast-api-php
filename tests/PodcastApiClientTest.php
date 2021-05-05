@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace ListenNotes\PodcastApiClient;
 
 use PHPUnit\Framework\TestCase;
@@ -139,34 +137,39 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $arrUrl['path'], '/api/v2/curated_podcasts/' . $arrOptions['id'] );
     }
 
-    // public function testPodcasts(): void
-    // {
-    //     $objClient = $this->podcastApiClient;
-    //     $arrId = explode( ',', '996,777,888,1000' );
-    //     $strResponse = $objClient->podcasts( $arrId );
-    //     $objResponse = json_decode( $strResponse );
+    public function testBatchFetchPodcasts(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'ids' => '996,777,888,1000' ];
+        $strResponse = $objClient->batchFetchPodcasts( $arrOptions );
+        $objResponse = json_decode( $strResponse );
 
-    //     $this->assertObjectHasAttribute( 'podcasts', $objResponse );
-    //     $this->assertGreaterThan( 0, count( $objResponse->podcasts ) );
-    //     $this->assertSame( $objClient->getMethod(), 'POST' );
-    //     $arrUrl = parse_url( $objClient->getUri() );
-    //     $this->assertSame( $arrUrl['path'], '/api/v2/podcasts' );
-    // }
+        $this->assertObjectHasAttribute( 'podcasts', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->podcasts ) );
+        $this->assertSame( $objClient->getMethod(), 'POST' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts' );
 
-    // public function testEpisodes(): void
-    // {
-    //     $objClient = $this->podcastApiClient;
-    //     $arrId = explode( ',', '996,777,888,1000' );
-    //     $strResponse = $objClient->episodes( $arrId );
-    //     $objResponse = json_decode( $strResponse );
+        $arrHeaders = $objClient->parseRequestHeaders();
+        $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );
+    }
 
-    //     $this->assertObjectHasAttribute( 'episodes', $objResponse );
-    //     $this->assertGreaterThan( 0, count( $objResponse->episodes ) );
-    //     $this->assertSame( $objClient->getMethod(), 'POST' );
-    //     $arrUrl = parse_url( $objClient->getUri() );
-    //     $this->assertSame( $arrUrl['path'], '/api/v2/episodes' );
-    // }
+    public function testBatchFetchEpisodes(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'ids' => '996,777,888,1000' ];
+        $strResponse = $objClient->batchFetchEpisodes( $arrOptions );
+        $objResponse = json_decode( $strResponse );
 
+        $this->assertObjectHasAttribute( 'episodes', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->episodes ) );
+        $this->assertSame( $objClient->getMethod(), 'POST' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/episodes' );
+
+        $arrHeaders = $objClient->parseRequestHeaders();
+        $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );
+    }
 
     public function testFetchPodcastGenres(): void
     {
@@ -268,49 +271,51 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $arrUrl['path'], '/api/v2/playlists/' . $arrOptions['id'] );
     }
 
-    // public function testFetchPlaylists(): void
-    // {
-    //     $objClient = $this->podcastApiClient;
-    //     $arrOptions = [ 'id' => 'shkjhd' ];
-    //     $arrOptions = [ 'page' => '2' ];
-    //     $strResponse = $objClient->playlists( $strId, [] );
-    //     $objResponse = json_decode( $strResponse );
+    public function testFetchMyPlaylists(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'page' => '2' ];
+        $strResponse = $objClient->fetchMyPlaylists( $arrOptions );
+        $objResponse = json_decode( $strResponse );
 
-    //     $this->assertObjectHasAttribute( 'items', $objResponse );
-    //     $this->assertGreaterThan( 0, count( $objResponse->items ) );
-    //     $this->assertSame( $objClient->getMethod(), 'GET' );
-    //     $arrUrl = parse_url( $objClient->getUri() );
-    //     $this->assertSame( $arrUrl['path'], '/api/v2/playlists/' . $strId );
-    // }
-/**
+        $this->assertObjectHasAttribute( 'playlists', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->playlists ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/playlists' );
+    }
 
+    public function testSumbitPodcast(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'rss' => 'http://myrss.com/rss' ];
+        $strResponse = $objClient->submitPodcast( $arrOptions );
+        $objResponse = json_decode( $strResponse );
 
-    def test_fetch_my_playlists_with_mock(self):
-        client = podcast_api.Client()
-        page = 2
-        response = client.fetch_my_playlists(page=page)
-        assert len(response.json().get("playlists", [])) > 0
-        assert response.request.method == "GET"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/playlists"
+        $this->assertObjectHasAttribute( 'status', $objResponse );
+        $this->assertGreaterThan( 0, strlen( $objResponse->status ) );
+        $this->assertSame( $objClient->getMethod(), 'POST' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/submit' );
 
-    def test_submit_podcast_with_mock(self):
-        client = podcast_api.Client()
-        rss = "http://myrss.com/rss"
-        response = client.submit_podcast(rss=rss)
-        assert parse_qs(response.request.body)["rss"][0] == rss
-        assert len(response.json().get("status", "")) > 0
-        assert response.request.method == "POST"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/podcasts/submit"
+        parse_str( urldecode( $objClient->getRequestBody() ), $arrQuery );
+        $this->assertSame( $arrQuery['rss'], $arrOptions['rss'] );
 
-    def test_delete_podcast_with_mock(self):
-        client = podcast_api.Client()
-        podcast_id = "asdfasdfdf"
-        response = client.delete_podcast(id=podcast_id)
-        assert len(response.json().get("status", "")) > 0
-        assert response.request.method == "DELETE"
-        url = urlparse(response.url)
-        assert url.path == "/api/v2/podcasts/%s" % podcast_id
-*/
+        $arrHeaders = $objClient->parseRequestHeaders();
+        $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );
+    }
+
+    public function testDeletePodcast(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'id' => '11111' ];
+        $strResponse = $objClient->deletePodcast( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'status', $objResponse );
+        $this->assertGreaterThan( 0, strlen( $objResponse->status ) );
+        $this->assertSame( $objClient->getMethod(), 'DELETE' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/' . $arrOptions['id'] );
+    }
 }
