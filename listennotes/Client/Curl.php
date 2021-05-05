@@ -142,18 +142,6 @@ class Curl
         $this->_strBody = substr( $strResponse, $intSize );
     }
 
-    public function get( $strUrl )
-    {
-        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
-        $strResponse = curl_exec( $this->_curl );
-
-        $this->setResponse( $strResponse );
-
-        $this->_processStatusCode();
-
-        return $this->_strBody;
-    }
-
     public function setRequestBody( $strBody )
     {
         $this->_strRequestBody = $strBody;
@@ -164,6 +152,17 @@ class Curl
         return $this->_strRequestBody;
     }
 
+    public function get( $strUrl )
+    {
+        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
+
+        $strResponse = curl_exec( $this->_curl );
+        $this->setResponse( $strResponse );
+        $this->_processStatusCode();
+
+        return $this->_strBody;
+    }
+
     public function delete( $strUrl )
     {
         curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
@@ -171,7 +170,6 @@ class Curl
 
         $strResponse = curl_exec( $this->_curl );
         $this->setResponse( $strResponse );
-
         $this->_processStatusCode();
 
         return $this->_strBody;
@@ -185,9 +183,7 @@ class Curl
 
         $strResponse = curl_exec( $this->_curl );
         $this->setRequestBody( http_build_query( $arrOptions ) );
-
         $this->setResponse( $strResponse );
-
         $this->_processStatusCode();
 
         return $this->_strBody;

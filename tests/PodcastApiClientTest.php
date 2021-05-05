@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace ListenNotes\PodcastApiClient;
 
 use PHPUnit\Framework\TestCase;
@@ -172,7 +170,6 @@ class PodcastApiClientTest extends TestCase
         $arrHeaders = $objClient->parseRequestHeaders();
         $this->assertSame( $arrHeaders['content-type'], 'application/x-www-form-urlencoded' );
     }
-
 
     public function testFetchPodcastGenres(): void
     {
