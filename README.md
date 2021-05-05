@@ -43,12 +43,16 @@ If you have any questions, please contact [hello@listennotes.com](hello@listenno
 
 ## Installation
 
-Install the official composer package of the Listen Notes Podcast API:
+Install the official [Composer](http://getcomposer.org/) package of the Listen Notes Podcast API:
 
 ```sh
 composer require listennotes/podcast-api
 ```
 
+To use the bindings, use Composer's [autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading):
+```sh
+require_once('vendor/autoload.php');
+```
 
 ### Requirements
 
@@ -64,7 +68,7 @@ value:
 
 <?php
 
-require_once dirname( __FILE__ ) . '/../vendor/autoload.php';
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 // Boilerplate to make an api call
 try {
