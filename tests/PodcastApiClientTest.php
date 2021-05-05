@@ -137,6 +137,22 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $arrUrl['path'], '/api/v2/curated_podcasts/' . $arrOptions['id'] );
     }
 
+    public function testFetchCuratedPodcastsLists(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'page' => '3' ];
+        $strResponse = $objClient->fetchCuratedPodcastsLists( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'curated_lists', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->curated_lists ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/curated_podcasts' );
+        parse_str( $arrUrl['query'], $arrQuery );        
+        $this->assertSame( $arrQuery['page'], $arrOptions['page'] );        
+    }    
+
     public function testBatchFetchPodcasts(): void
     {
         $objClient = $this->podcastApiClient;
