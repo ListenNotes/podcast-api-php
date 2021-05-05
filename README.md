@@ -22,7 +22,7 @@ composer require listennotes/podcast-api
 
 ### Requirements
 
-- PHP 7+
+- PHP 7.3+
 
 ## Usage
 
