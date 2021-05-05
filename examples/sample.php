@@ -8,8 +8,7 @@ try {
     define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
     $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
-    $strResult = $objClient->search( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
-    // print_r( json_decode( $strResult ) );
+    $strResult = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
 
     $arrHeaders = $objClient->getHeaders();
     print("\n=== Some account info ===\n");

@@ -28,5 +28,8 @@
                 "tests/"
             ]
         }
-    }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }    
 }
