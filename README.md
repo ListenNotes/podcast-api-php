@@ -43,7 +43,7 @@ If you have any questions, please contact [hello@listennotes.com](hello@listenno
 
 ## Installation
 
-Install the official [Composer](http://getcomposer.org/) package of the Listen Notes Podcast API:
+Install the official [Composer](http://getcomposer.org/) package of [the Listen Notes Podcast API](https://packagist.org/packages/listennotes/podcast-api):
 
 ```sh
 composer require listennotes/podcast-api
