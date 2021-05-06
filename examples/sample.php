@@ -7,8 +7,8 @@ try {
 
     define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-    $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
-    $strResponse = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
+    $objClient = new ListenNotes\PodcastApi\Client( API_KEY );
+    $strResponse = $objClient->typeahead( [ 'q' => 'pod', 'show_podcasts' => '1' ] );
     $arrHeaders = $objClient->getHeaders();
 
     print("\n=== Some account info ===\n");
@@ -19,17 +19,17 @@ try {
     print("\n=== Response data ===\n");
     print_r( json_decode( $strResponse ) );
 
-} catch ( ListenNotes\PodcastApiClient\Exception\APIConnectionException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\APIConnectionException $objException ) {
     print("Failed ot connect to Listen API servers");
-} catch ( ListenNotes\PodcastApiClient\Exception\AuthenticationException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\AuthenticationException $objException ) {
     print("Wrong api key, or your account has been suspended!");
-} catch ( ListenNotes\PodcastApiClient\Exception\InvalidRequestException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\InvalidRequestException $objException ) {
     print("Wrong parameters!");
-} catch ( ListenNotes\PodcastApiClient\Exception\NotFoundException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\NotFoundException $objException ) {
     print("Endpoint not exist or the podcast / episode not exist!");
-} catch ( ListenNotes\PodcastApiClient\Exception\RateLimitException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\RateLimitException $objException ) {
     print("You have reached your quota limit!");
-} catch ( ListenNotes\PodcastApiClient\Exception\ListenApiException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\ListenApiException $objException ) {
     print("Something wrong on Listen Notes servers");
 } catch ( Exception $e ) {
     print("Other errors that may not be related to Listen API");
@@ -56,8 +56,8 @@ try {
 // $strResponse = $objClient->fetchCuratedPodcastsListById( [ 'id' => 'SDFKduyJ47r' ] );
 // print_r( json_decode( $strResponse ) );
 
-$strResponse = $objClient->fetchCuratedPodcastsLists( [ 'page' => 2 ] );
-print_r( json_decode( $strResponse ) );
+// $strResponse = $objClient->fetchCuratedPodcastsLists( [ 'page' => 2 ] );
+// print_r( json_decode( $strResponse ) );
 
 // $strResponse = $objClient->fetchPodcastGenres( [ 'top_level_only' => 0 ] );
 // print_r( json_decode( $strResponse ) );

@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ListenNotes\\PodcastApiClient\\": "listennotes/"
+            "ListenNotes\\PodcastApi\\": "listennotes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ListenNotes\\PodcastApiClient\\": [
+            "ListenNotes\\PodcastApi\\": [
                 "tests/"
             ]
         }

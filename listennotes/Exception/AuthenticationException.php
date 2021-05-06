@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ListenNotes\PodcastApiClient\Exception;
+namespace ListenNotes\PodcastApi\Exception;
 
 class AuthenticationException extends ListenApiException
 {

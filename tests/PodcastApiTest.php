@@ -1,23 +1,22 @@
 <?php
 
-namespace ListenNotes\PodcastApiClient;
+namespace ListenNotes\PodcastApi;
 
 use PHPUnit\Framework\TestCase;
 
-class PodcastApiClientTest extends TestCase
+class PodcastApiTest extends TestCase
 {
-    /** @var PodcastApiClient */
     protected $podcastApiClient;
 
     protected function setUp(): void
     {
-        $this->podcastApiClient = new PodcastApiClient();
+        $this->podcastApiClient = new Client();
     }
 
     public function testIsInstanceOfPodcastApiClient(): void
     {
         $actual = $this->podcastApiClient;
-        $this->assertInstanceOf(PodcastApiClient::class, $actual);
+        $this->assertInstanceOf(Client::class, $actual);
     }
 
     public function testSetApiKey(): void
@@ -26,7 +25,7 @@ class PodcastApiClientTest extends TestCase
         $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), null );
 
         $strKey = 'testKey';
-        $objClient = new PodcastApiClient( $strKey );
+        $objClient = new Client( $strKey );
         $this->assertSame( $objClient->getRequestHeader( 'X-ListenAPI-Key' ), $strKey );
     }
 
@@ -50,7 +49,7 @@ class PodcastApiClientTest extends TestCase
     public function testSearchWithAuthenticationError(): void
     {
         $strKey = 'testKey';
-        $objClient = new PodcastApiClient( $strKey );
+        $objClient = new Client( $strKey );
         try {
             $objClient->search( [ 'q' => 'dummy' ] );
             $this->fail( 'Did not throw an exception.' );

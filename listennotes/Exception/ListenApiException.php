@@ -1,6 +1,6 @@
 <?php
 
-namespace ListenNotes\PodcastApiClient\Exception;
+namespace ListenNotes\PodcastApi\Exception;
 
 class ListenApiException extends \Exception
 {

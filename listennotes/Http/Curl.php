@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ListenNotes\PodcastApiClient\Client;
+namespace ListenNotes\PodcastApi\Http;
 
-use ListenNotes\PodcastApiClient\Exception;
+use ListenNotes\PodcastApi\Exception;
 
 class Curl
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ListenNotes\PodcastApiClient;
+namespace ListenNotes\PodcastApi;
 
-final class PodcastApiClient extends Client\Curl
+final class Client extends Http\Curl
 {
     public function __construct( $strApiKey = '' )
     {

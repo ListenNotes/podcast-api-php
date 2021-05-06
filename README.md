@@ -75,7 +75,7 @@ try {
 
     define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-    $objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+    $objClient = new ListenNotes\PodcastApi\Client( API_KEY );
     $strResponse = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
     $arrHeaders = $objClient->getHeaders();
 
@@ -87,17 +87,17 @@ try {
     print("\n=== Response data ===\n");
     print_r( json_decode( $strResponse ) );
     
-} catch ( ListenNotes\PodcastApiClient\Exception\APIConnectionException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\APIConnectionException $objException ) {
     print("Failed ot connect to Listen API servers");
-} catch ( ListenNotes\PodcastApiClient\Exception\AuthenticationException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\AuthenticationException $objException ) {
     print("Wrong api key, or your account has been suspended!");
-} catch ( ListenNotes\PodcastApiClient\Exception\InvalidRequestException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\InvalidRequestException $objException ) {
     print("Wrong parameters!");
-} catch ( ListenNotes\PodcastApiClient\Exception\NotFoundException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\NotFoundException $objException ) {
     print("Endpoint not exist or the podcast / episode not exist!");
-} catch ( ListenNotes\PodcastApiClient\Exception\RateLimitException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\RateLimitException $objException ) {
     print("You have reached your quota limit!");
-} catch ( ListenNotes\PodcastApiClient\Exception\ListenApiException $objException ) {
+} catch ( ListenNotes\PodcastApi\Exception\ListenApiException $objException ) {
     print("Something wrong on Listen Notes servers");
 } catch ( Exception $e ) {
     print("Other errors that may not be related to Listen API");
@@ -128,7 +128,6 @@ And you can see some sample code [here](https://github.com/ListenNotes/podcast-a
 
 
 
-
 ## API Reference
 
 Each function is a wrapper to send an HTTP request to the corresponding endpoint on the
@@ -156,7 +155,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->search( [ 'q' => 'startup' ] );
 print_r( json_decode( $strResponse ) );
@@ -993,7 +992,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->typeahead( [ 'q' => 'startup', 'show_podcasts' => '1' ] );
 print_r( json_decode( $strResponse ) );
@@ -1202,7 +1201,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->getPodcastById( [ 'id' => '4d3fe717742d4963a85562e9f84d8c79' ] );
 print_r( json_decode( $strResponse ) );
@@ -1755,7 +1754,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchEpisodeById( [ 'id' => '6b6d65930c5a4f71b254465871fed370',
     'show_transcript' => '1' ] );
@@ -2161,7 +2160,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchPodcastLanguages();
 print_r( json_decode( $strResponse ) );
@@ -2332,7 +2331,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchPodcastGenres( [ 'top_level_only' => '1' ] );
 print_r( json_decode( $strResponse ) );
@@ -2523,7 +2522,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchBestPodcasts( [ 'genre_id' => '93', 'page' => '2' ] );
 print_r( json_decode( $strResponse ) );
@@ -3843,7 +3842,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchPodcastRegions();
 print_r( json_decode( $strResponse ) );
@@ -4058,7 +4057,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchRecommendationsForPodcast( 
     [ 'id' => '25212ac3c53240a880dd5032e547047b', 'safe_mode' => 1 ] );
@@ -4734,7 +4733,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchRecommendationsForEpisode( 
     [ 'id' => '914a9deafa5340eeaa2859c77f275799', 'safe_mode' => 1 ] );
@@ -5118,7 +5117,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->batchFetchEpisodes( [ 
     'ids' => 'c577d55b2b2b483c969fae3ceb58e362,0f34a9099579490993eec9e8c8cebb82' ] );
@@ -5349,7 +5348,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->batchFetchPodcasts( [ 
     'ids' => '3302bc71139541baa46ecb27dbf6071a,68faf62be97149c280ebcc25178aa731,9cf19c590ff0484d97b18b329fed0c6a' ] );
@@ -6531,7 +6530,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->justListen();
 print_r( json_decode( $strResponse ) );
@@ -6718,7 +6717,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchCuratedPodcastsListById( [ 'id' => 'SDFKduyJ47r' ] );
 print_r( json_decode( $strResponse ) );
@@ -7819,7 +7818,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchCuratedPodcastsLists( [ 'page' => 2 ] );
 print_r( json_decode( $strResponse ) );
@@ -9249,7 +9248,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->submitPodcast( [ 'rss' => 'https://feeds.megaphone.fm/committed' ] );
 print_r( json_decode( $strResponse ) );
@@ -9370,7 +9369,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->deletePodcast( [ 'id' => '4d3fe717742d4963a85562e9f84d8c79' ] );
 print_r( json_decode( $strResponse ) );
@@ -9442,7 +9441,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchPlaylistById( [ 'id' => 'm1pe7z60bsw', 'type' ='podcast_list' ] );
 print_r( json_decode( $strResponse ) );
@@ -10637,7 +10636,7 @@ require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 define( 'API_KEY', ( getenv( 'API_KEY' ) ? getenv( 'API_KEY' ) : null ) );
 
-$objClient = new ListenNotes\PodcastApiClient\PodcastApiClient( API_KEY );
+$objClient = new ListenNotes\PodcastApi\Client( API_KEY );
 
 $strResponse = $objClient->fetchMyPlaylists( [ 'page' => '1', 'sort' ='name_a_to_z' ] );
 print_r( json_decode( $strResponse ) );
@@ -10798,3 +10797,6 @@ See all available parameters on the [API Docs page](https://www.listennotes.com/
 }
 ```   
 </details>
+
+
+
