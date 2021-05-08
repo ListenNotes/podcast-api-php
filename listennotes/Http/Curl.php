@@ -32,12 +32,12 @@ class Curl
             CURLOPT_RETURNTRANSFER => true,   // return web page
             CURLOPT_HEADER         => true,  // don't return headers
             CURLOPT_FOLLOWLOCATION => true,   // follow redirects
-            CURLOPT_MAXREDIRS      => 3,     // stop after 10 redirects
+            CURLOPT_MAXREDIRS      => 3,     // stop after 3 redirects
             CURLOPT_ENCODING       => '',     // handle compressed
             CURLOPT_USERAGENT      => $this->_strUserAgent, // name of client
             CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
             CURLOPT_CONNECTTIMEOUT => 10,    // time-out on connect
-            CURLOPT_TIMEOUT        => 10,    // time-out on response
+            CURLOPT_TIMEOUT        => 30,    // time-out on response
             CURLINFO_HEADER_OUT    => true,    // headers sent on request
         );
         curl_setopt_array( $this->_curl, $arrOptions );
