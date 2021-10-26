@@ -78,6 +78,54 @@ class PodcastApiTest extends TestCase
         $this->assertSame( $arrQuery['show_podcasts'], $arrOptions['show_podcasts'] );
     }
 
+    public function testSpellcheck(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strTerm = 'dummy';
+        $arrOptions = [ 'q' => 'dummy' ];
+        $strResponse = $objClient->spellcheck( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'tokens', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->tokens ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/spellcheck' );
+        parse_str( $arrUrl['query'], $arrQuery );
+        $this->assertSame( $arrQuery['q'], $arrOptions['q'] );
+    }    
+
+    public function testFetchRelatedSearches(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strTerm = 'dummy';
+        $arrOptions = [ 'q' => 'dummy' ];
+        $strResponse = $objClient->fetchRelatedSearches( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'terms', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->terms ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/related_searches' );
+        parse_str( $arrUrl['query'], $arrQuery );
+        $this->assertSame( $arrQuery['q'], $arrOptions['q'] );
+    }        
+
+
+    public function testFetchTrendingSearches(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strResponse = $objClient->fetchTrendingSearches();
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'terms', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->terms ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/trending_searches' );
+    }  
+
     public function testFetchBestPodcasts(): void
     {
         $objClient = $this->podcastApiClient;

@@ -179,13 +179,37 @@ final class Client extends Http\Curl
         return $strResponse;
     }
 
+    public function fetchRelatedSearches( array $arrOptions = [] )
+    {
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'related_searches' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
+    public function fetchTrendingSearches( array $arrOptions = [] )
+    {
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'trending_searches' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }    
+
+    public function spellcheck( array $arrOptions = [] )
+    {
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'spellcheck' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
     public function typeahead( array $arrOptions = [] )
     {
         $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
         $strUrl = $this->getAction( 'typeahead' ) . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
-    }
+    }    
 
     public function search( array $arrOptions = [] )
     {

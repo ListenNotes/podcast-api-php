@@ -35,6 +35,15 @@ try {
     print("Other errors that may not be related to Listen API");
 }
 
+// $strResponse = $objClient->spellcheck( [ 'q' => 'evergrand stok' ] );
+// print_r( json_decode( $strResponse ) );
+
+// $strResponse = $objClient->fetchRelatedSearches( [ 'q' => 'evergrande' ] );
+// print_r( json_decode( $strResponse ) );
+
+// $strResponse = $objClient->fetchTrendingSearches();
+// print_r( json_decode( $strResponse ) );
+
 // $strResponse = $objClient->search( [ 'q' => 'startup' ] );
 // print_r( json_decode( $strResponse ) );
 
