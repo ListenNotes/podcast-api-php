@@ -1,6 +1,6 @@
 # Podcast API PHP Library
 
-[![Build Status](https://travis-ci.com/ListenNotes/podcast-api-php.svg?branch=main)](https://travis-ci.com/ListenNotes/podcast-api-php)
+[![PHP CI](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml/badge.svg)](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml)
 
 The Podcast API PHP library provides convenient access to the [Listen Notes Podcast API](https://www.listennotes.com/api/) from
 applications written in the PHP language.
