@@ -28,7 +28,7 @@ try {
 } catch ( ListenNotes\PodcastApi\Exception\NotFoundException $objException ) {
     print("Endpoint not exist or the podcast / episode not exist!");
 } catch ( ListenNotes\PodcastApi\Exception\RateLimitException $objException ) {
-    print("You have reached your quota limit!");
+    print("You have reached your quota limit or rate limit!");
 } catch ( ListenNotes\PodcastApi\Exception\ListenApiException $objException ) {
     print("Something wrong on Listen Notes servers");
 } catch ( Exception $e ) {

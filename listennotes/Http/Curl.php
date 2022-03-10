@@ -205,7 +205,7 @@ class Curl
                 break;
 
             case 429:
-                throw new Exception\RateLimitException( 'You use FREE plan and you exceed the quota limit.' );
+                throw new Exception\RateLimitException( 'For FREE plan, exceeding the quota limit; or for all plans, sending too many requests too fast and exceeding the rate limit - https://www.listennotes.com/api/faq/#faq17' );
                 break;
 
             default:

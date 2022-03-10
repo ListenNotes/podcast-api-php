@@ -99,7 +99,7 @@ try {
 } catch ( ListenNotes\PodcastApi\Exception\NotFoundException $objException ) {
     print("Endpoint not exist or the podcast / episode not exist!");
 } catch ( ListenNotes\PodcastApi\Exception\RateLimitException $objException ) {
-    print("You have reached your quota limit!");
+    print("You have reached your quota limit or rate limit!");
 } catch ( ListenNotes\PodcastApi\Exception\ListenApiException $objException ) {
     print("Something wrong on Listen Notes servers");
 } catch ( Exception $e ) {
@@ -121,7 +121,7 @@ the sort of error that occurred.
 |  AuthenticationException | wrong api key or your account is suspended  |
 | APIConnectionException  | fail to connect to API servers  |
 | InvalidRequestException  | something wrong on your end (client side errors), e.g., missing required parameters  |
-| RateLimitException  | you are using FREE plan and you exceed the quota limit  |
+| RateLimitException  | for FREE plan, exceeding the quota limit; or for all plans, sending too many requests too fast and exceeding the rate limit  |
 | NotFoundException  | endpoint not exist, or podcast / episode not exist  |
 | ListenApiException  | something wrong on our end (unexpected server errors)  |
 
