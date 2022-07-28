@@ -1,6 +1,6 @@
 # Podcast API PHP Library
 
-[![PHP CI](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml/badge.svg)](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml) ![Packagist Version](https://img.shields.io/packagist/v/listennotes/podcast-api)
+[![PHP CI](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml/badge.svg)](https://github.com/ListenNotes/podcast-api-php/actions/workflows/php.yml) [![Packagist Version](https://img.shields.io/packagist/v/listennotes/podcast-api)](https://packagist.org/packages/listennotes/podcast-api)
 
 The Podcast API PHP library provides convenient access to the [Listen Notes Podcast API](https://www.listennotes.com/podcast-api/) from
 applications written in the PHP language.
