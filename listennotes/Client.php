@@ -218,4 +218,17 @@ final class Client extends Http\Curl
         $strResponse = $this->get( $strUrl );
         return $strResponse;
     }
+
+    public function fetchAudienceForPodcast( array $arrOptions = [] )
+    {
+        $strId = null;
+        if ( isset( $arrOptions['id'] ) ) {
+            $strId = $arrOptions['id'];
+            unset( $arrOptions['id'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'podcasts' ) . '/' . $strId . '/audience' . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }    
 }

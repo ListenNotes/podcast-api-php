@@ -387,4 +387,18 @@ class PodcastApiTest extends TestCase
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/' . $arrOptions['id'] );
     }
+
+    public function testFetchAudienceForPodcast(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'id' => 'shkjhd' ];
+        $strResponse = $objClient->fetchAudienceForPodcast( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertObjectHasAttribute( 'by_regions', $objResponse );
+        $this->assertGreaterThan( 0, count( $objResponse->by_regions ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/' . $arrOptions['id'] . '/audience' );
+    }    
 }
