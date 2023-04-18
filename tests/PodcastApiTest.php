@@ -36,7 +36,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->search( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'results', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'results'));
         $this->assertGreaterThan( 0, count( $objResponse->results ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -68,7 +68,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->typeahead( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'terms', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'terms'));
         $this->assertGreaterThan( 0, count( $objResponse->terms ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -86,7 +86,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->spellcheck( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'tokens', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'tokens'));        
         $this->assertGreaterThan( 0, count( $objResponse->tokens ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -103,7 +103,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchRelatedSearches( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'terms', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'terms'));
         $this->assertGreaterThan( 0, count( $objResponse->terms ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -119,7 +119,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchTrendingSearches();
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'terms', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'terms'));
         $this->assertGreaterThan( 0, count( $objResponse->terms ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -133,7 +133,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchBestPodcasts( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'total', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'total'));
         $this->assertGreaterThan( 0, $objResponse->total );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -149,7 +149,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchPodcastById( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'episodes', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'episodes'));        
         $this->assertGreaterThan( 0, count( $objResponse->episodes ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -163,7 +163,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchEpisodeById( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'podcast', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'podcast'));   
         $this->assertGreaterThan( 0, strlen( $objResponse->podcast->rss ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -177,7 +177,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchCuratedPodcastsListById( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'podcasts', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'podcasts'));   
         $this->assertGreaterThan( 0, count( $objResponse->podcasts ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -191,7 +191,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchCuratedPodcastsLists( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'curated_lists', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'curated_lists')); 
         $this->assertGreaterThan( 0, count( $objResponse->curated_lists ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -207,7 +207,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->batchFetchPodcasts( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'podcasts', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'podcasts'));
         $this->assertGreaterThan( 0, count( $objResponse->podcasts ) );
         $this->assertSame( $objClient->getMethod(), 'POST' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -227,7 +227,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->batchFetchEpisodes( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'episodes', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'episodes'));
         $this->assertGreaterThan( 0, count( $objResponse->episodes ) );
         $this->assertSame( $objClient->getMethod(), 'POST' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -247,7 +247,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchPodcastGenres( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'genres', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'genres'));
         $this->assertGreaterThan( 0, count( $objResponse->genres ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -263,7 +263,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchPodcastRegions( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'regions', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'regions'));        
         $this->assertGreaterThan( 0, count( (array) $objResponse->regions ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -277,7 +277,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchPodcastLanguages( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'languages', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'languages'));
         $this->assertGreaterThan( 0, count( $objResponse->languages ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -291,7 +291,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->justListen( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'audio_length_sec', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'audio_length_sec'));
         $this->assertGreaterThan( 0, $objResponse->audio_length_sec );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -305,7 +305,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchRecommendationsForPodcast( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'recommendations', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'recommendations'));
         $this->assertGreaterThan( 0, count( $objResponse->recommendations ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -319,7 +319,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchRecommendationsForEpisode( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'recommendations', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'recommendations'));
         $this->assertGreaterThan( 0, count( $objResponse->recommendations ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -333,7 +333,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchPlaylistById( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'items', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'items'));        
         $this->assertGreaterThan( 0, count( $objResponse->items ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -347,7 +347,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchMyPlaylists( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'playlists', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'playlists'));
         $this->assertGreaterThan( 0, count( $objResponse->playlists ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -361,7 +361,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->submitPodcast( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'status', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'status'));
         $this->assertGreaterThan( 0, strlen( $objResponse->status ) );
         $this->assertSame( $objClient->getMethod(), 'POST' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -381,7 +381,7 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->deletePodcast( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'status', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'status'));
         $this->assertGreaterThan( 0, strlen( $objResponse->status ) );
         $this->assertSame( $objClient->getMethod(), 'DELETE' );
         $arrUrl = parse_url( $objClient->getUri() );
@@ -395,10 +395,24 @@ class PodcastApiTest extends TestCase
         $strResponse = $objClient->fetchAudienceForPodcast( $arrOptions );
         $objResponse = json_decode( $strResponse );
 
-        $this->assertObjectHasAttribute( 'by_regions', $objResponse );
+        $this->assertTrue(property_exists($objResponse, 'by_regions'));
         $this->assertGreaterThan( 0, count( $objResponse->by_regions ) );
         $this->assertSame( $objClient->getMethod(), 'GET' );
         $arrUrl = parse_url( $objClient->getUri() );
         $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/' . $arrOptions['id'] . '/audience' );
+    }
+    
+    public function testFetchPodcastsByDomain(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $arrOptions = [ 'domain_name' => 'npr.org' ];
+        $strResponse = $objClient->fetchPodcastsByDomain( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertTrue(property_exists($objResponse, 'podcasts'));
+        $this->assertGreaterThan( 0, count( $objResponse->podcasts ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/podcasts/domains/' . $arrOptions['domain_name'] );
     }    
 }

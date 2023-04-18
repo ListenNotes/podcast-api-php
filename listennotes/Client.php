@@ -230,5 +230,18 @@ final class Client extends Http\Curl
         $strUrl = $this->getAction( 'podcasts' ) . '/' . $strId . '/audience' . $strQuery;
         $strResponse = $this->get( $strUrl );
         return $strResponse;
-    }    
+    }
+
+    public function fetchPodcastsByDomain( array $arrOptions = [] )
+    {
+        $strDomainName = null;
+        if ( isset( $arrOptions['domain_name'] ) ) {
+            $strDomainName = $arrOptions['domain_name'];
+            unset( $arrOptions['domain_name'] );
+        }
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'podcasts' ) . '/domains/' . $strDomainName . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }        
 }
