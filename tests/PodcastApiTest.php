@@ -78,6 +78,24 @@ class PodcastApiTest extends TestCase
         $this->assertSame( $arrQuery['show_podcasts'], $arrOptions['show_podcasts'] );
     }
 
+    public function testSearchEpisodeTitles(): void
+    {
+        $objClient = $this->podcastApiClient;
+        $strTerm = 'dummy';
+        $arrOptions = [ 'podcast_id' => '1234', 'q' => 'dummy' ];
+        $strResponse = $objClient->searchEpisodeTitles( $arrOptions );
+        $objResponse = json_decode( $strResponse );
+
+        $this->assertTrue(property_exists($objResponse, 'results'));
+        $this->assertGreaterThan( 0, count( $objResponse->results ) );
+        $this->assertSame( $objClient->getMethod(), 'GET' );
+        $arrUrl = parse_url( $objClient->getUri() );
+        $this->assertSame( $arrUrl['path'], '/api/v2/search_episode_titles' );
+        parse_str( $arrUrl['query'], $arrQuery );
+        $this->assertSame( $arrQuery['q'], $arrOptions['q'] );
+        $this->assertSame( $arrQuery['podcast_id'], $arrOptions['podcast_id'] );
+    }
+
     public function testSpellcheck(): void
     {
         $objClient = $this->podcastApiClient;

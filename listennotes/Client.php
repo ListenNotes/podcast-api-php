@@ -219,6 +219,14 @@ final class Client extends Http\Curl
         return $strResponse;
     }
 
+    public function searchEpisodeTitles( array $arrOptions = [] )
+    {
+        $strQuery = count( $arrOptions ) ? '?' . http_build_query( $arrOptions ) : '';
+        $strUrl = $this->getAction( 'search_episode_titles' ) . $strQuery;
+        $strResponse = $this->get( $strUrl );
+        return $strResponse;
+    }
+
     public function fetchAudienceForPodcast( array $arrOptions = [] )
     {
         $strId = null;
