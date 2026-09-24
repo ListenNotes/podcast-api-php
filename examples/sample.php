@@ -20,7 +20,7 @@ try {
     print_r( json_decode( $strResponse ) );
 
 } catch ( ListenNotes\PodcastApi\Exception\APIConnectionException $objException ) {
-    print("Failed ot connect to Listen API servers");
+    print("Failed to connect to Listen API servers");
 } catch ( ListenNotes\PodcastApi\Exception\AuthenticationException $objException ) {
     print("Wrong api key, or your account has been suspended!");
 } catch ( ListenNotes\PodcastApi\Exception\InvalidRequestException $objException ) {
@@ -86,7 +86,7 @@ try {
 // $strResponse = $objClient->fetchRecommendationsForEpisode( [ 'id' => '914a9deafa5340eeaa2859c77f275799', 'safe_mode' => 1 ] );
 // print_r( json_decode( $strResponse ) );
 
-// $strResponse = $objClient->fetchPlaylistById( [ 'id' => 'm1pe7z60bsw', 'type' ='podcast_list' ] );
+// $strResponse = $objClient->fetchPlaylistById( [ 'id' => 'm1pe7z60bsw', 'type' => 'podcast_list' ] );
 // print_r( json_decode( $strResponse ) );
 
 // $strResponse = $objClient->fetchMyPlaylists()

@@ -4,220 +4,231 @@ declare(strict_types=1);
 
 namespace ListenNotes\PodcastApi\Http;
 
+use ListenNotes\PodcastApi\Client;
 use ListenNotes\PodcastApi\Exception;
 
 class Curl
 {
     protected $_curl;
     protected $_objInfo;
-    protected $_strHeader;
-    protected $_strBody;
+    protected $_strHeader = '';
+    protected $_strBody = '';
     protected $_strHost = 'https://listen-api-test.listennotes.com';
-    protected $_strMethod;
-    protected $_strUri;
-    protected $_strRequestBody;
+    protected $_strMethod = '';
+    protected $_strUri = '';
+    protected $_strRequestBody = '';
     protected $_strVersion = 'api/v2';
     protected $_arrRequestHeaders = [];
-    protected $_strUserAgent = 'podcast-api-php';
+    protected $_strUserAgent = 'podcast-api-php ' . Client::VERSION;
+    protected float $timeout;
 
-    public function __construct( $strApiKey = '' )
+    public function __construct($strApiKey = '', $timeout = 30)
     {
-        if ( $strApiKey ) {
+        if ((!is_int($timeout) && !is_float($timeout)) || !is_finite($timeout) || $timeout <= 0) {
+            throw new \InvalidArgumentException('timeout must be a finite positive number of seconds');
+        }
+        $this->timeout = (float) $timeout;
+        $this->_objInfo = (object) ['http_code' => 0, 'request_header' => ''];
+        if ($strApiKey !== null && $strApiKey !== '') {
             $this->_strHost = 'https://listen-api.listennotes.com';
-            $this->setRequestHeader( 'X-ListenAPI-Key', $strApiKey );
-        }
-
-        $this->_curl = curl_init();
-        $arrOptions = array(
-            CURLOPT_RETURNTRANSFER => true,   // return web page
-            CURLOPT_HEADER         => true,  // don't return headers
-            CURLOPT_FOLLOWLOCATION => true,   // follow redirects
-            CURLOPT_MAXREDIRS      => 3,     // stop after 3 redirects
-            CURLOPT_ENCODING       => '',     // handle compressed
-            CURLOPT_USERAGENT      => $this->_strUserAgent, // name of client
-            CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
-            CURLOPT_CONNECTTIMEOUT => 10,    // time-out on connect
-            CURLOPT_TIMEOUT        => 30,    // time-out on response
-            CURLINFO_HEADER_OUT    => true,    // headers sent on request
-        );
-        curl_setopt_array( $this->_curl, $arrOptions );
-        if ( count( $this->getRequestHeaders() ) ) {
-            curl_setopt( $this->_curl, CURLOPT_HTTPHEADER, $this->getRequestHeaders() );
+            $this->setRequestHeader('X-ListenAPI-Key', $strApiKey);
         }
     }
 
-    public function getRequestHeader( $strHeader = '' )
+    protected function requestApi(string $method, string $path, array $queryNames, array $params): string
     {
-        return isset( $this->_arrRequestHeaders[$strHeader] ) ? $this->_arrRequestHeaders[$strHeader] : null;
-    }
-
-    public function getRequestHeaders( $strHeader = '' )
-    {
-        $arrHeaders = [];
-        if ( count( $this->_arrRequestHeaders ) ) {
-            foreach ( $this->_arrRequestHeaders as $strHeader => $strValue ) {
-                $arrHeaders[] = $strHeader . ': ' . $strValue;
+        $path = preg_replace_callback('/\{([^}]+)\}/', function (array $match) use (&$params): string {
+            $name = $match[1];
+            $value = $params[$name] ?? null;
+            if ((!is_string($value) && !is_int($value)) || (string) $value === '') {
+                throw new Exception\InvalidRequestException('Missing required path parameter: ' . $name);
+            }
+            unset($params[$name]);
+            return rawurlencode((string) $value);
+        }, $path);
+        $query = $body = [];
+        foreach ($params as $name => $value) {
+            if ($value === null) {
+                continue;
+            }
+            if (in_array($method, ['GET', 'DELETE'], true) || in_array($name, $queryNames, true)) {
+                $query[$name] = $value;
+            } else {
+                $body[$name] = $value;
             }
         }
-        return $arrHeaders;
+        $url = $this->getAction(ltrim($path, '/'));
+        if ($query !== []) {
+            $url .= '?' . $this->encodeParameters($query);
+        }
+        return match ($method) {
+            'GET' => $this->get($url),
+            'DELETE' => $this->delete($url),
+            'POST' => $this->post($url, $body),
+            'PUT' => $this->put($url, $body),
+            default => throw new \InvalidArgumentException('Unsupported HTTP method'),
+        };
     }
 
-    public function setRequestHeader( $strHeader, $strValue )
+    protected function encodeParameters(array $params): string
     {
+        return http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    public function getRequestHeader($strHeader = '')
+    {
+        foreach ($this->_arrRequestHeaders as $name => $value) {
+            if (strcasecmp($name, $strHeader) === 0) {
+                return $value;
+            }
+        }
+        return null;
+    }
+
+    public function getRequestHeaders($strHeader = '')
+    {
+        $headers = [];
+        foreach ($this->_arrRequestHeaders as $name => $value) {
+            $headers[] = $name . ': ' . $value;
+        }
+        return $headers;
+    }
+
+    public function setRequestHeader($strHeader, $strValue)
+    {
+        if (!is_string($strHeader) || !preg_match('/^[!#$%&\'*+.^_`|~0-9A-Za-z-]+$/D', $strHeader)
+            || !is_string($strValue) || strpbrk($strValue, "\r\n\0") !== false) {
+            throw new \InvalidArgumentException('Invalid request header');
+        }
+        foreach (array_keys($this->_arrRequestHeaders) as $name) {
+            if (strcasecmp($name, $strHeader) === 0) {
+                unset($this->_arrRequestHeaders[$name]);
+            }
+        }
         $this->_arrRequestHeaders[$strHeader] = $strValue;
     }
 
-    public function getAction( $strAction = '' )
+    public function getAction($strAction = '')
     {
-        $arrPieces = [ $this->_strHost, $this->_strVersion, $strAction ];
-        $strAction = implode( '/', $arrPieces );
-        return $strAction;
+        return $this->_strHost . '/' . $this->_strVersion . '/' . $strAction;
     }
 
     public function getStatusCode()
     {
-        return $this->_objInfo->http_code;
+        return (int) $this->_objInfo->http_code;
+    }
+
+    protected function parseHeaderBlock(string $raw): array
+    {
+        $headers = [];
+        foreach (preg_split('/\r?\n/', $raw) as $line) {
+            if (preg_match('/^HTTP\/\S+\s+\d+/', $line)) {
+                // Keep the final response after proxy/100 Continue header blocks.
+                $headers = [];
+            } elseif (str_contains($line, ':')) {
+                [$name, $value] = explode(':', $line, 2);
+                $headers[strtolower(trim($name))] = trim($value);
+            }
+        }
+        return $headers;
     }
 
     public function getHeaders()
     {
-        $arrHeaders = array_filter( explode( "\r\n", $this->_strHeader ) );
-        $strHead = array_shift( $arrHeaders );
-        list( $strProtocol, $intStatusCode ) = explode( ' ', $strHead );
-        foreach ( $arrHeaders as $I => $strHeader ) {
-            unset( $arrHeaders[$I] );
-            list( $strHeader, $strValue ) = explode( ': ', $strHeader );
-            $arrHeaders[ strtolower( $strHeader ) ] = $strValue;
-        }
-        return $arrHeaders;
+        return $this->parseHeaderBlock($this->_strHeader);
     }
 
-    public function setMethod( $strMethod )
-    {
-        $this->_strMethod = $strMethod;
-    }
-
-    public function getMethod()
-    {
-        return $this->_strMethod;
-    }
-
-    public function setUri( $strUri )
-    {
-        $this->_strUri = $strUri;
-    }
-
-    public function getUri()
-    {
-        return $this->_strUri;
-    }
+    public function setMethod($strMethod) { $this->_strMethod = $strMethod; }
+    public function getMethod() { return $this->_strMethod; }
+    public function setUri($strUri) { $this->_strUri = $strUri; }
+    public function getUri() { return $this->_strUri; }
+    public function setRequestBody($strBody) { $this->_strRequestBody = $strBody; }
+    public function getRequestBody() { return $this->_strRequestBody; }
 
     public function parseRequestHeaders()
     {
-        $arrHeaders = array_filter( explode( "\r\n", $this->_objInfo->request_header ) );
-        $strHead = array_shift( $arrHeaders );
-        list( $strMethod, $strUri, $strProtocol ) = explode( ' ', $strHead );
-        $this->setMethod( $strMethod );
-        $this->setUri( $strUri );
-
-        foreach ( $arrHeaders as $I => $strHeader ) {
-            unset( $arrHeaders[$I] );
-            list( $strHeader, $strValue ) = explode( ': ', $strHeader );
-            $arrHeaders[ strtolower( $strHeader ) ] = $strValue;
+        $raw = $this->_objInfo->request_header ?? '';
+        if (preg_match('/^(\S+) (\S+) HTTP\/\S+/', $raw, $match)) {
+            $this->setMethod($match[1]);
+            $this->setUri($match[2]);
         }
-        return $arrHeaders;
+        $headerLines = strstr($raw, "\n");
+        return $this->parseHeaderBlock($headerLines === false ? '' : $headerLines);
     }
 
-    public function setResponse( $strResponse )
+    public function setResponse($strResponse)
     {
-        $intSize = curl_getinfo( $this->_curl, CURLINFO_HEADER_SIZE );
-        $this->_objInfo = (object) curl_getinfo( $this->_curl );
+        $size = curl_getinfo($this->_curl, CURLINFO_HEADER_SIZE);
+        $this->_objInfo = (object) curl_getinfo($this->_curl);
         $this->parseRequestHeaders();
-
-        $this->_strHeader = substr( $strResponse, 0, $intSize );
-        $this->_strBody = substr( $strResponse, $intSize );
+        $this->_strHeader = substr($strResponse, 0, $size);
+        $this->_strBody = substr($strResponse, $size);
     }
 
-    public function setRequestBody( $strBody )
-    {
-        $this->_strRequestBody = $strBody;
-    }
+    public function get($strUrl) { return $this->sendRequest('GET', $strUrl); }
+    public function delete($strUrl) { return $this->sendRequest('DELETE', $strUrl); }
+    public function post($strUrl, $arrOptions) { return $this->sendRequest('POST', $strUrl, $this->encodeParameters($arrOptions)); }
+    public function put($strUrl, $arrOptions) { return $this->sendRequest('PUT', $strUrl, $this->encodeParameters($arrOptions)); }
 
-    public function getRequestBody()
+    protected function sendRequest(string $method, string $url, ?string $body = null): string
     {
-        return $this->_strRequestBody;
-    }
-
-    public function get( $strUrl )
-    {
-        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
-
-        $strResponse = curl_exec( $this->_curl );
-        $this->setResponse( $strResponse );
+        // A fresh handle prevents method/body/header leakage and stale-connection replays.
+        $this->_curl = curl_init();
+        $this->_objInfo = (object) ['http_code' => 0, 'request_header' => ''];
+        $this->_strHeader = $this->_strBody = '';
+        $this->setMethod($method);
+        $this->setUri($url);
+        $this->setRequestBody($body ?? '');
+        $headers = $this->getRequestHeaders();
+        if ($body !== null && $this->getRequestHeader('Content-Type') === null) {
+            $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        }
+        $options = [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_ENCODING => '',
+            CURLOPT_USERAGENT => $this->_strUserAgent,
+            CURLOPT_CONNECTTIMEOUT_MS => (int) max(1, min(10000, ceil($this->timeout * 1000))),
+            CURLOPT_TIMEOUT_MS => (int) max(1, ceil($this->timeout * 1000)),
+            CURLINFO_HEADER_OUT => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_CUSTOMREQUEST => $method,
+        ];
+        if ($body !== null) {
+            $options[CURLOPT_POSTFIELDS] = $body;
+        }
+        curl_setopt_array($this->_curl, $options);
+        $response = curl_exec($this->_curl);
+        if ($response === false) {
+            throw new Exception\APIConnectionException('Could not connect to Listen API: ' . curl_error($this->_curl), 0, null, 0);
+        }
+        $this->setResponse($response);
         $this->_processStatusCode();
-
-        return $this->_strBody;
-    }
-
-    public function delete( $strUrl )
-    {
-        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
-        curl_setopt( $this->_curl, CURLOPT_CUSTOMREQUEST, 'DELETE' );
-
-        $strResponse = curl_exec( $this->_curl );
-        $this->setResponse( $strResponse );
-        $this->_processStatusCode();
-
-        return $this->_strBody;
-    }
-
-    public function post( $strUrl, $arrOptions )
-    {
-        $strOptions = http_build_query( $arrOptions );
-        curl_setopt( $this->_curl, CURLOPT_URL, $strUrl );
-        curl_setopt( $this->_curl, CURLOPT_POSTFIELDS, $strOptions );
-        curl_setopt( $this->_curl, CURLOPT_POST, true );
-
-        $strResponse = curl_exec( $this->_curl );
-        $this->setRequestBody( $strOptions );
-        $this->setResponse( $strResponse );
-        $this->_processStatusCode();
-
         return $this->_strBody;
     }
 
     protected function _processStatusCode()
     {
-        switch ( $this->getStatusCode() ) {
-            case 200:
-                break;
-
-            case 400:
-                throw new Exception\InvalidRequestException( 'Something wrong on your end (client side errors), e.g., missing required parameters.' );
-                break;
-
-            case 401:
-                throw new Exception\AuthenticationException( 'Wrong api key or your account is suspended.' );
-                break;
-
-            case 404:
-                throw new Exception\NotFoundException( 'Endpoint not exist, or podcast / episode not exist.' );
-                break;
-
-            case 429:
-                throw new Exception\RateLimitException( 'For FREE plan, exceeding the quota limit; or for all plans, sending too many requests too fast and exceeding the rate limit - https://www.listennotes.com/api/faq/#faq17' );
-                break;
-
-            default:
-                if ( $this->getStatusCode() >= 500 ) {
-                    throw new Exception\ListenApiException( 'Error on our end (unexpected server errors)' );
-                }
-                throw new \Exception( 'Unknown error. Please report to hello@listennotes.com. ' . $this->getStatusCode() );
+        $status = $this->getStatusCode();
+        if ($status >= 200 && $status < 300) {
+            return;
         }
-    }
-
-    public function __destruct()
-    {
-        curl_close( $this->_curl );
+        $class = match ($status) {
+            400 => Exception\InvalidRequestException::class,
+            401 => Exception\AuthenticationException::class,
+            403 => Exception\PermissionDeniedException::class,
+            404 => Exception\NotFoundException::class,
+            429 => Exception\RateLimitException::class,
+            default => Exception\ListenApiException::class,
+        };
+        $data = json_decode($this->_strBody, true);
+        $detail = is_array($data) ? ($data['error'] ?? null) : null;
+        $message = 'Listen API returned HTTP ' . $status;
+        if (is_string($detail) && $detail !== '') {
+            $message .= ': ' . $detail;
+        }
+        throw new $class($message, $status, null, $status, $this->_strBody, $this->getHeaders());
     }
 }
