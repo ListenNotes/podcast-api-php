@@ -9,13 +9,12 @@
         }
     ],
     "require": {
-        "php": "^7.0 || ^8.0",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-json": "*"
     },
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.4",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "13.3.3"
     },
     "autoload": {
         "psr-4": {
@@ -24,17 +23,29 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ListenNotes\\PodcastApi\\": [
-                "tests/"
-            ]
+            "ListenNotes\\PodcastApi\\Tests\\": "tests/"
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit --testsuite offline",
+        "test-integration": "phpunit --testsuite integration",
+        "lint": "@php tests/lint.php"
     },
     "config": {
-        "allow-plugins": {
-            "bamarni/composer-bin-plugin": true
-        }
+        "sort-packages": true
+    },
+    "archive": {
+        "exclude": [
+            "/.git",
+            "/.github",
+            "/.gitignore",
+            "/.gitattributes",
+            "/.phpunit.cache",
+            "/vendor",
+            "/composer.phar",
+            "/tests",
+            "/phpunit.xml",
+            "/composer.lock"
+        ]
     }
 }

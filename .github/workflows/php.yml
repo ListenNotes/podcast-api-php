@@ -2,35 +2,58 @@ name: PHP CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-
+  test:
+    name: Test (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v4
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    - name: Run test suite
-      run: composer run-script test tests/*
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, mbstring, xml, xmlwriter
+          tools: composer:2.10.2
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer validate --strict
+      - run: composer lint
+      - run: composer test
+      - name: Check standalone distribution
+        run: |
+          composer archive --format=tar --dir=/tmp --file=podcast-api
+          sdk_package_dir=$(mktemp -d)
+          tar -xf /tmp/podcast-api.tar -C "$sdk_package_dir"
+          cd "$sdk_package_dir"
+          test ! -e vendor
+          test ! -e .git
+          test ! -e .phpunit.cache
+          test ! -e tests
+          test -f listennotes/api-contract.json
+          composer install --no-dev --no-interaction --no-progress
+          php -r 'require "vendor/autoload.php"; $client = new ListenNotes\PodcastApi\Client(); if ($client::VERSION !== "3.0.0" || count(get_class_methods(ListenNotes\PodcastApi\ApiMethods::class)) !== 30) { exit(1); }'
+  integration:
+    name: Integration (public mock API)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: curl, dom, mbstring, xml, xmlwriter
+          tools: composer:2.10.2
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer test-integration
