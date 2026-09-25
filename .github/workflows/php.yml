@@ -42,7 +42,7 @@ jobs:
           test ! -e tests
           test -f listennotes/api-contract.json
           composer install --no-dev --no-interaction --no-progress
-          php -r 'require "vendor/autoload.php"; $client = new ListenNotes\PodcastApi\Client(); if ($client::VERSION !== "3.0.0" || count(get_class_methods(ListenNotes\PodcastApi\ApiMethods::class)) !== 30) { exit(1); }'
+          php -r 'require "vendor/autoload.php"; $client = new ListenNotes\PodcastApi\Client(); if ($client::VERSION !== "3.1.0" || count(get_class_methods(ListenNotes\PodcastApi\ApiMethods::class)) !== 31 || !method_exists($client, "deletePlaylist")) { exit(1); }'
   integration:
     name: Integration (public mock API)
     runs-on: ubuntu-latest
