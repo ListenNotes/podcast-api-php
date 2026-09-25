@@ -6,7 +6,7 @@ namespace ListenNotes\PodcastApi;
 
 final class Client extends Http\Curl
 {
-    public const VERSION = '3.0.0';
+    public const VERSION = '3.1.0';
 
     use ApiMethods;
 }

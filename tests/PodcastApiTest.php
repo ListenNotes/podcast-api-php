@@ -127,7 +127,7 @@ final class PodcastApiTest extends TestCase
         self::assertSame($data['body'], $this->client->getRequestBody());
         self::assertSame(200, $this->client->getStatusCode());
         self::assertSame('17', $this->client->getHeaders()['x-listenapi-usage']);
-        self::assertSame('podcast-api-php 3.0.0', $data['headers']['user-agent']);
+        self::assertSame('podcast-api-php ' . Client::VERSION, $data['headers']['user-agent']);
         if (in_array($op['method'], ['POST', 'PUT'], true)) {
             self::assertSame('application/x-www-form-urlencoded', $data['headers']['content-type']);
         } else { self::assertSame('', $data['body']); }
@@ -176,11 +176,35 @@ final class PodcastApiTest extends TestCase
 
     public function testMissingIdentifiersFailBeforeConnecting(): void
     {
+        foreach ([[], ['id' => null], ['id' => ''], ['id' => false]] as $params) {
+            try { $this->client->deletePlaylist($params); self::fail('Missing identifier was accepted'); }
+            catch (Exception\InvalidRequestException $e) {
+                self::assertSame('Missing required path parameter: id', $e->getMessage());
+            }
+        }
         foreach ([[], ['id' => null], ['id' => ''], ['id' => 'abc'], ['id' => 'abc', 'item_id' => false]] as $params) {
             try { $this->client->deletePlaylistItem($params); self::fail('Missing identifier was accepted'); }
             catch (Exception\InvalidRequestException $e) { self::assertStringContainsString('path parameter', $e->getMessage()); }
         }
         self::assertSame('', file_get_contents(self::$log));
+    }
+
+    public function testDeletePlaylistEncodesIdWithoutQueryOrBody(): void
+    {
+        $params = ['id' => 'a/b ?#%+é'];
+        $before = $params;
+        $response = $this->client->deletePlaylist($params);
+        self::assertIsString($response);
+        $data = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame($before, $params);
+        self::assertSame('DELETE', $data['method']);
+        self::assertSame('/api/v2/playlists/a%2Fb%20%3F%23%25%2B%C3%A9', $data['uri']);
+        self::assertSame([], $data['query']);
+        self::assertSame('', $data['body']);
+        self::assertArrayNotHasKey('content-type', $data['headers']);
+        self::assertSame(200, $this->client->getStatusCode());
+        self::assertSame('17', $this->client->getHeaders()['x-listenapi-usage']);
+        self::assertCount(1, file(self::$log));
     }
 
     public function testRequestStateAndHeadersDoNotLeak(): void
@@ -192,6 +216,7 @@ final class PodcastApiTest extends TestCase
         $first->setRequestHeader('x-test', 'after: value');
         foreach ([['createPlaylist', ['name' => 'test'], 'POST'], ['search', ['q' => 'test'], 'GET'],
             ['deletePlaylistItem', ['id' => 'abc', 'item_id' => 1], 'DELETE'], ['search', ['q' => 'test'], 'GET'],
+            ['createPlaylist', ['name' => 'test'], 'POST'], ['deletePlaylist', ['id' => 'abc'], 'DELETE'],
             ['updatePlaylist', ['id' => 'abc', 'description' => ''], 'PUT'], ['search', ['q' => 'test'], 'GET']] as [$method, $params, $http]) {
             $data = json_decode($first->$method($params), true);
             self::assertSame($http, $data['method']);
@@ -235,19 +260,23 @@ final class PodcastApiTest extends TestCase
     #[DataProvider('errors')]
     public function testErrorsPreserveDetailsAndNeverRetryOrRedirect(int $status, string $class): void
     {
-        try { $this->client->post(self::$origin . '/?status=' . $status, ['name' => 'test']); self::fail('Expected API error'); }
-        catch (Exception\ListenApiException $e) {
-            self::assertInstanceOf($class, $e);
-            self::assertSame($status, $e->getStatus());
-            self::assertSame($status, $e->getCode());
-            self::assertSame('17', $e->getResponseHeaders()['x-listenapi-usage']);
-            self::assertStringContainsString('HTTP ' . $status, $e->getMessage());
-            if ($status >= 400) {
-                self::assertStringContainsString('Specific API error', $e->getMessage());
-                self::assertSame('{"error":"Specific API error"}', $e->getResponseBody());
+        foreach ([fn () => $this->client->post(self::$origin . '/?status=' . $status, ['name' => 'test']),
+            fn () => $this->client->deletePlaylist(['id' => 'abc', 'status' => $status])] as $request) {
+            file_put_contents(self::$log, '');
+            try { $request(); self::fail('Expected API error'); }
+            catch (Exception\ListenApiException $e) {
+                self::assertInstanceOf($class, $e);
+                self::assertSame($status, $e->getStatus());
+                self::assertSame($status, $e->getCode());
+                self::assertSame('17', $e->getResponseHeaders()['x-listenapi-usage']);
+                self::assertStringContainsString('HTTP ' . $status, $e->getMessage());
+                if ($status >= 400) {
+                    self::assertStringContainsString('Specific API error', $e->getMessage());
+                    self::assertSame('{"error":"Specific API error"}', $e->getResponseBody());
+                }
             }
+            self::assertCount(1, file(self::$log));
         }
-        self::assertCount(1, file(self::$log));
     }
 
     public function testNonJsonErrorsAndExceptionDefaults(): void
@@ -264,15 +293,19 @@ final class PodcastApiTest extends TestCase
     public function testTimeoutsWrapConnectionFailureAndClearResponseState(): void
     {
         $client = new FixtureClient(self::$origin, null, 0.05);
-        $client->search(['q' => 'ok']);
-        try { $client->get(self::$origin . '/?delay=1'); self::fail('Expected timeout'); }
-        catch (Exception\APIConnectionException $e) {
-            self::assertSame(0, $e->getStatus());
-            self::assertSame(0, $client->getStatusCode());
-            self::assertSame([], $client->getHeaders());
-            self::assertSame('', $e->getResponseBody());
-        } finally { usleep(180000); }
-        self::assertCount(2, file(self::$log));
+        foreach ([fn () => $client->get(self::$origin . '/?delay=1'),
+            fn () => $client->deletePlaylist(['id' => 'abc', 'delay' => 1])] as $request) {
+            file_put_contents(self::$log, '');
+            $client->search(['q' => 'ok']);
+            try { $request(); self::fail('Expected timeout'); }
+            catch (Exception\APIConnectionException $e) {
+                self::assertSame(0, $e->getStatus());
+                self::assertSame(0, $client->getStatusCode());
+                self::assertSame([], $client->getHeaders());
+                self::assertSame('', $e->getResponseBody());
+            } finally { usleep(180000); }
+            self::assertCount(2, file(self::$log));
+        }
     }
 
     public function testInvalidTimeoutsAndHeaders(): void

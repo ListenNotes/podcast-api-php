@@ -95,6 +95,10 @@ final class MockApiTest extends TestCase
             self::assertIsArray($payload['data']); self::assertContains($payload['type'], ['episode', 'podcast']);
         } elseif ($op['operationId'] === 'deletePlaylistItem') {
             self::assertTrue($payload['deleted']); self::assertIsInt($payload['id']);
+        } elseif ($op['operationId'] === 'deletePlaylist') {
+            self::assertTrue($payload['deleted']);
+            self::assertSame($op['example_params']['id'], $payload['id']);
+            self::assertSame('', $this->client->getRequestBody());
         }
     }
 

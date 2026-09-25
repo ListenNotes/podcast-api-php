@@ -168,6 +168,12 @@ trait ApiMethods
             [], $arrOptions);
     }
 
+    public function deletePlaylist(array $arrOptions = []): string
+    {
+        return $this->requestApi('DELETE', '/playlists/{id}',
+            [], $arrOptions);
+    }
+
     public function addPlaylistItem(array $arrOptions = []): string
     {
         return $this->requestApi('POST', '/playlists/{id}/items',
