@@ -79,13 +79,22 @@ final class MockApiTest extends TestCase
         $path = preg_replace_callback('/\{([^}]+)\}/', static function ($m) use (&$params) {
             $value = $params[$m[1]]; unset($params[$m[1]]); return rawurlencode((string) $value);
         }, $op['path']);
-        $status = in_array($op['operationId'], ['createPlaylist', 'addPlaylistItem'], true) ? 201 : 200;
+        $status = match ($op['operationId']) {
+            'createPlaylist', 'addPlaylistItem' => 201,
+            'transcribeEpisode' => 202,
+            default => 200,
+        };
         $payload = $this->checkResponse($this->client->{$op['func']}($op['example_params']), $op['method'], $path, $status);
         if (in_array($op['method'], ['GET', 'DELETE'], true)) {
             parse_str(parse_url($this->client->getUri(), PHP_URL_QUERY) ?? '', $sent);
         } else { parse_str($this->client->getRequestBody(), $sent); }
         self::assertSame(array_map('strval', $params), $sent);
-        if (in_array($op['operationId'], ['createPlaylist', 'updatePlaylist', 'getPlaylistById'], true)) {
+        if ($op['operationId'] === 'transcribeEpisode') {
+            self::assertSame('queued', $payload['status']);
+        } elseif ($op['operationId'] === 'getEpisodeTranscript') {
+            self::assertSame('completed', $payload['status']);
+            self::assertNotEmpty($payload['download_urls']);
+        } elseif (in_array($op['operationId'], ['createPlaylist', 'updatePlaylist', 'getPlaylistById'], true)) {
             self::assertIsString($payload['id']);
             self::assertContains($payload['type'], ['episode_list', 'podcast_list']);
             self::assertContains($payload['visibility'], ['public', 'unlisted', 'private']);

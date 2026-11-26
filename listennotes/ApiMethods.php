@@ -192,4 +192,28 @@ trait ApiMethods
             [], $arrOptions);
     }
 
+    public function estimateEpisodeTranscription(array $arrOptions = []): string
+    {
+        return $this->requestApi('GET', '/episodes/{id}/transcript/estimate',
+            [], $arrOptions);
+    }
+
+    public function transcribeEpisode(array $arrOptions = []): string
+    {
+        return $this->requestApi('POST', '/episodes/{id}/transcript',
+            [], $arrOptions);
+    }
+
+    public function getEpisodeTranscript(array $arrOptions = []): string
+    {
+        return $this->requestApi('GET', '/episodes/{id}/transcript',
+            [], $arrOptions);
+    }
+
+    public function listTranscripts(array $arrOptions = []): string
+    {
+        return $this->requestApi('GET', '/transcripts',
+            ['limit', 'cursor'], $arrOptions);
+    }
+
 }
