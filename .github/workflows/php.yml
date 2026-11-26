@@ -42,7 +42,26 @@ jobs:
           test ! -e tests
           test -f listennotes/api-contract.json
           composer install --no-dev --no-interaction --no-progress
-          php -r 'require "vendor/autoload.php"; $client = new ListenNotes\PodcastApi\Client(); if ($client::VERSION !== "3.1.0" || count(get_class_methods(ListenNotes\PodcastApi\ApiMethods::class)) !== 31 || !method_exists($client, "deletePlaylist")) { exit(1); }'
+          php <<'PHP'
+          <?php
+
+          require 'vendor/autoload.php';
+
+          $contract = json_decode(file_get_contents('listennotes/api-contract.json'), true, 512, JSON_THROW_ON_ERROR);
+          $client = new ListenNotes\PodcastApi\Client();
+          if ($client::VERSION !== $contract['version']) {
+              throw new RuntimeException('Packaged client and contract versions differ');
+          }
+          $methods = array_column($contract['operations'], 'func');
+          if (count(get_class_methods(ListenNotes\PodcastApi\ApiMethods::class)) !== count($methods)) {
+              throw new RuntimeException('Packaged method count does not match the contract');
+          }
+          foreach ($methods as $method) {
+              if (!method_exists($client, $method)) {
+                  throw new RuntimeException("Missing packaged method: $method");
+              }
+          }
+          PHP
   integration:
     name: Integration (public mock API)
     runs-on: ubuntu-latest
